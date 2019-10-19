@@ -1,0 +1,24 @@
+<형제노드 찾기>
+CSS선택자
+a + b { } : a 바로 다음에 오는 형제b
+a ~ b { } : a 다음에 오는 모든 형제b
+
+JavaScript (객체의 형제노드 찾기)
+--Obj.nextSibling
+--Obj.nextElementSibling
+
+ex) <input>제목 -> inputObj.nextSibling -> 제목
+    <input><span> -> inputObj.nextSibling -> <span>
+    <input> <span> -> inputObj.nextSibling -> 공백값
+                         -> inputObj.nextElementSibling -> <span>
+Child요소 찾기
+    obj.children[0]; //첫번째 자식  =  obj.childNodes()
+    obj.children[1]; //두번째 자식
+
+DOM에 요소 제거하기
+Obj.removeChild( ) //1개 옵션만 제거
+
+DOM에 요소 추가하기
+var e = document.createElement("option"); -> <option>추가
+var t = document.createElement("제주"); -> 제주 추가
+e.appendChild(t); -> <option>제주</option>

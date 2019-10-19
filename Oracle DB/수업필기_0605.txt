@@ -1,0 +1,118 @@
+<VIEW>
+: 테이블의 데이터를 보거나 변경, 자체데이터 없음
+
+Ex1) 뷰 생성
+CREATE VIEW stu_view (stu_no, stu_name, stu_gender) AS
+SELECT stu_no, stu_name, stu_gender
+FROM student;
+
+Ex2) 뷰 생성 (조인)
+CREATE VIEW emp_view (empno, ename, dname) AS
+SELECT empno, ename, dname
+FROM emp NATURAL JOIN dept;
+
+Q1 EMP 테이블로부터 10, 20부서의 사원들로 이루어진 뷰를 생성하시오.
+CREATE VIEW emp_v2 AS
+SELECT * from emp
+WHERE deptno IN('10','20');
+
+Q2 사원번호, 사원이름, 부서이름, 상급자이름으로 구성된 뷰를 생성하시오.
+CREATE VIEW emp_v3 (empno, ename, dname, mname) AS
+SELECT e.empno, e.ename, d.dname, e2.ename
+FROM emp e JOIN emp e2 ON(e.mgr=e2.empno)
+JOIN dept d ON(e.deptno=d.deptno);
+
+Q3 학과별 평균몸무게와 평균키를 가지는 뷰를 생성하시오.
+CREATE VIEW stu_v2 AS
+SELECT stu_dept, round(AVG(stu_weight)) avg_w, round(AVG(stu_height)) avg_h
+FROM student
+GROUP BY stu_dept;
+
+<INDEX>
+: 사용자가 칼럼을 빨리 검색하고 싶을때 생성, 잘사용X
+
+<SEQUENCE>
+: 고유번호를 자동생성
+
+Ex1) 생성
+CREATE SEQUENCE seq1
+INCREMENT BY 1
+START WITH 1
+MAXVALUE 100;
+
+Ex2) 검색
+SELECT seq1.NEXTVAL, ename FROM emp;
+
+Ex3) 테이블 생성
+CREATE TABLE emp_seq AS
+SELECT seq1.NEXTVAL, ename FROM emp;
+
+Q4 학생이름, 키, 몸무게, BMI 지수(체중/(신장*신장))를 가지는 뷰를 생성하시오.
+CREATE VIEW stu_v3(name, height, weight, bmi) AS
+SELECT stu_name, stu_height, stu_weight,
+ROUND((stu_weight/(stu_height*stu_height/10000)))
+FROM student;
+
+Q5 사원이름, 급여, 커미션, 전체수입(급여+커미션)을 가지는 뷰를 생성하시오.
+CREATE VIEW emp_v4 AS
+SELECT ename, sal, NVL(comm,0) emp_c, (sal+NVL(comm,0)) emp_t
+FROM emp;
+
+Q6 초기값1 증감값1 최대값1000인 시퀀스를 만들고,
+시퀀스를 이용해서 학생들에게 숫자를 지정하는 새로운 테이블을 만드시오.
+1)
+CREATE SEQUENCE seq_stu
+INCREMENT BY 1
+START WITH 1
+MAXVALUE 1000;
+2)
+CREATE TABLE stu_seq AS
+SELECT seq_stu.NEXTVAL, stu_name FROM student;
+
+
+<ROWID / ROWNUM>
+Ex1)
+ROWID, ROWNUM
+SELECT ename
+FROM emp;
+
+Ex2)
+SELECT stu_height, ROWNUM
+FROM (SELECT stu_height FROM student
+ORDER BY stu_height) stu
+WHERE ROWNUM<4;
+
+
+Q7 수입(급여+커미션)이 높은 상위 5명의
+사원번호, 사원이름, 부서명을 출력하는 뷰를 만드시오.
+1) 전체조회 (상위5명: KING/SCOTT/FORD/JONES/BLAKE)
+SELECT empno, ename, dname, (sal+NVL(comm,0))
+FROM emp NATURAL JOIN dept
+ORDER BY 4 desc;
+
+2) 뷰 생성
+CREATE VIEW emp_v5 AS
+SELECT *
+FROM (SELECT empno, ename, dname, (sal+NVL(comm,0))
+FROM emp NATURAL JOIN dept
+ORDER BY 4 desc)
+WHERE ROWNUM<=5;
+
+
+Q8 부서별 평균 급여가 작은 부서 2개의 부서이름을 뷰로 출력하시오.
+1) 부서별 평균급여(SALES 1567 / RESEARCH 2175 / ACCOUNTING 2917)
+SELECT d.dname, round(avg(e.sal))
+FROM emp e, dept d
+WHERE e.deptno=d.deptno
+GROUP BY dname
+ORDER BY avg(sal);
+
+2) 뷰 생성
+CREATE VIEW dept_v AS
+SELECT *
+FROM (SELECT d.dname, round(avg(e.sal))
+FROM emp e, dept d
+WHERE e.deptno=d.deptno
+GROUP BY dname
+ORDER BY avg(sal))
+WHERE ROWNUM<3;

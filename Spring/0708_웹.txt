@@ -1,0 +1,16 @@
+-------------------------------------
+WWW (World Wide Web)
+Web 관리 기관 - W3C
+Web 기본 프로토콜 - HTTP(요청, 응답, 요청응답후 연결끊김 : Stateless 프로토콜)
+Web 기본 마크업언어 - HTML
+
+	 XML (데이터의 구조화) : 공공 API 사용할때 활용
+SGML  -   HTML (데이터의 표현)
+	 HTML4(1996년) - XHTML
+
+	 WEB2.0 - 브라우저 플랫폼화 : 크롬
+	 HTML5(2010 이후) : WHATWG(Web Hypertext Application Technology Working Group)
+
+화면에 보여주는 절차 : 렌더링
+웹브라우저의 구조
+

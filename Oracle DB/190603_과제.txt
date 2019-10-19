@@ -1,0 +1,86 @@
+﻿1.
+INSERT INTO student_test VALUES(20101059,'조병준','컴퓨터정보',1,'B','M',164,70);
+
+2.
+INSERT INTO student_test VALUES(20102038,'남지선','전기전자',1,'C','F',null,null);
+
+3.
+INSERT INTO student_test
+VALUES(20103009,'박소신','기계',
+          (select stu_grade from student where stu_no=20153075),
+          (select stu_class from student where stu_no=20153075),
+           'M',null,null);
+
+4.
+INSERT INTO student_test
+select * from student
+where stu_grade=3;
+
+5.
+UPDATE student_test SET stu_class='B'
+where stu_no=20131001;
+
+6.
+문제없음..
+
+7.
+UPDATE student_test SET stu_grade=stu_grade+1;
+
+8.
+UPDATE student_test SET stu_dept='컴퓨터정보', stu_no=20141021
+where stu_no=20142021;
+
+9.
+UPDATE enrol_test SET enr_grade=enr_grade-10
+where sub_no=
+(select sub_no from subject
+where sub_name='전자회로실험');
+
+10.
+UPDATE enrol_test SET enr_grade=0
+where stu_no=20151062
+and sub_no =
+(select sub_no from subject
+where sub_name='소프트웨어공학');
+
+11.
+DELETE FROM student_test
+where stu_no=20153088;
+
+12.
+INSERT INTO subject_test
+VALUES('112', '자동화시스템', '고종민', 3, '기계');
+
+13.
+UPDATE subject_test SET sub_no='501'
+where sub_no='110';
+
+14.
+DELETE FROM subject_test
+where sub_no='101';
+
+15.
+UPDATE enrol_test SET sub_no='999'
+where sub_no NOT IN
+(select sub_no from subject_test);
+
+16.
+UPDATE enrol_test SET sub_no=99999999
+where stu_no NOT IN
+(select stu_no from subject_test);
+
+17.
+DELETE FROM enrol_test
+where sub_no=999;
+
+18.
+DELETE FROM enrol_test
+where stu_no=99999999;
+
+19.
+DELETE FROM subject_test
+where sub_no NOT IN
+(select sub_no from enrol);
+
+20.
+DELETE FROM enrol_test;

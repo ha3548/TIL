@@ -1,0 +1,172 @@
+※ from dual -> 함수를 테이블 생성없이 수행하기 위한 Dummy 테이블, 임시공간
+
+<문자함수>
+select CONCAT(ename, deptno) from emp;
+select ename || deptno from emp; -> CONCAT과 같은 기능을 한다.
+select SUBSTR(ename,1,3) from emp;
+
+Q1 입사년도가 1981년 5월부터 1982년 2월 사이에 입사한 사원의
+이름, 부서번호를 출력하시오. (TO_DATE 활용)
+select ename, deptno from emp
+where HIREDATE>=TO_DATE('19810501','yyyy-mm-dd')
+and HIREDATE<=TO_DATE('19820228','yyyy-mm-dd')
+order by ename desc; -> 이름 내림차순 정렬
+※ yyyymmdd / yyyy-mm-dd 상관없음!
+
+<변환함수>
+TO_CHAR
+TO_NUMBER
+TO_DATE
+
+select TO_CHAR(123456789) from dual;
+select TO_NUMBER('123456') from dual;
+select TO_NUMBER('d123456') from dual; -> 문자가 삽입되어 ERROR!
+select TO_NUMBER(TO_CHAR(123456)) from dual; -> 문자변환 후 숫자변환
+
+select TO_CHAR(123456789) +1 as result from dual; -> 왜 돌아가니?? ★
+select TO_CHAR(123456789, '999,999,999')+1 as result from dual; -> ERROR!
+select TO_NUMBER('123456') +1 as result from dual; -> 123457
+
+select TO_CHAR(123456789, '$999999999') from dual;
+select TO_CHAR(123456789, '999,999,999') from dual;
+※ 9는 한자리숫자 명시
+
+select TO_DATE('20190529','mm-dd-yyyy') from dual; -> 데이터≠형식 ERROR!
+select TO_DATE('05292019','mm-dd-yyyy') from dual; -> 데이터=형식
+
+<NULL관련 함수>
+select ename, mgr from emp where mgr IS NOT NULL;
+->NULL값은 계산할때 문제가 될수있다.
+
+select ename, NVL(MGR,1111)+1 from emp; -> NULL에 기본값으로 1111 부여
+select ename, NVL(comm,100) from emp; -> NULL에 기본값으로 100 부여
+
+Q1 모든 사원들에게 커미션을 200씩 추가하여 출력하시오.
+select ename, NVL(comm,0)+200 from emp;
+-> NULL에 기본값으로 0부여 후 200씩 추가
+
+!= T/F
+<> 값
+^= XOR
+XOR함수: 값이 다르면1 같으면0
+00->0  01->1  10->1  11->0
+
+Q2 JOB이 MANAGER가 아닌 사원의 모든정보를 출력하시오.
+select * from emp where JOB <> 'MANAGER';
+
+Q3 급여가 800이상인 사원의 이름, 급여, 부서번호를 출력하시오.
+select ename, sal, deptno from emp
+where sal>=800;
+
+Q4 직책이 SALESMAN, ANALYST인 사람의 모든정보를 출력하시오.
+select * from emp where JOB='SALESMAN' or JOB='ANALYST';
+select * from emp where JOB like 'S%' or JOB like 'A%';
+select * from emp where JOB In('SALESMAN', 'ANALYST');
+select * from emp where JOB = Any('SALESMAN', 'ANALYST');
+select * from emp where JOB = Some('SALESMAN', 'ANALYST');
+
+Q5 부서번호가 30번인 사원들 중 사원번호, 이름, 입사일을 출력하는데
+사원번호를 오름차순 정렬하시오.
+select empno, ename, hiredate from emp
+where deptno=30
+order by empno asc;
+
+Q6 사원들중에 1981년에 입사한 사원의 이름과 사원번호(내림차순)를 출력하시오.
+select ename, empno from emp
+where hiredate>=TO_DATE('19810101','yyyymmdd')
+and hiredate<=TO_DATE('19811231','yyyymmdd')
+order by empno desc;
+
+select ename, empno from emp
+where TO_CHAR(hiredate, 'yyyy')='1981' -> 1981도 가능
+order by empno desc;
+
+select empno, ename, sal,
+decode(job, 'SALESMAN',sal*1.1, 'CLERK', sal*1.3, 'MANAGER',sal*1.5, sal)
+as IN_SAL from emp;
+
+Q7 사장님만 급여를 인상(DECODE 사용)
+select empno, ename, sal,
+DECODE(mgr, null, sal*2, sal) as 인상급여 from emp;
+
+Q8 학생들의 등록금이 기계과 10000원, 전기전자 8000원, 컴퓨터 6000원 일때,
+학번(단, 2013년만), 이름, 전공, 등록금을 출력하시오.
+A1)
+select stu_no, stu_name, stu_dept,
+DECODE(stu_dept, '기계', '10000원', '전기전자', '8000원', '컴퓨터정보', '6000원', '0원') as 등록금
+from student
+where SUBSTR(stu_no,1,4)='2013';
+where stu_no LIKE '2013%';
+
+A2)
+select stu_no, stu_name, stu_dept,
+CASE stu_dept WHEN '기계' THEN '10000원'
+	      WHEN '전기전자' THEN '8000원'
+	      WHEN '컴퓨터정보' THEN '6000원'
+	      ELSE '0원'
+END as 등록금
+from student
+where stu_no LIKE '2013%';
+
+Q9 기계과 학생들의 가장 큰 신장, 가장 작은 신장, 평균 신장을 출력하시오. (소수점 둘째자리)
+select MAX(stu_height), MIN(stu_height), ROUND(AVG(stu_height),2) from student
+where stu_dept='기계';
+select MAX(stu_height), MIN(stu_height), TRUNC(AVG(stu_height),2) from student
+where stu_dept='기계';
+
+Q10 1981년 입사자들의 평균임금을 출력하시오.
+select AVG(sal) from emp where TO_CHAR(hiredate,'yyyy')='1981';
+select AVG(sal) from emp where TO_CHAR(hiredate,'yyyy')=1981;
+
+Q11 사원번호, 사원이름, 총급여(SAL+COMM)을 출력하시오.
+select empno, ename, sal+DECODE(comm, null, 0, comm) from emp;
+
+Q12 사원번호, 사원이름, 직책(사장, 사원)을 표시하시오.
+A1)
+select empno, ename, job,
+CASE job WHEN 'PRESIDENT' THEN '사장'
+	ELSE ' 사원'
+	END AS 직책
+from emp;
+
+A2)
+select empno, ename, job,
+DECODE(mgr, null, '사장', ' 사원') AS 직책
+from emp;
+
+<GROUP BY, HAVING>
+SELECT DISTINCT STU_DEPT, STU_HEIGHT, STU_GENDER FROM STUDENT;
+≠
+SELECT STU_DEPT, STU_HEIGHT FROM STUDENT
+GROUP BY STU_DEPT; -> 학과는 3개인데 키는 더 많아서 ERROR!
+
+Q13 SALESMAN의 커미션 평균을 출력하시오.
+SELECT JOB, AVG(NVL(COMM,0))
+FROM EMP
+WHERE JOB='SALESMAN'
+GROUP BY JOB;
+
+Q14 직책별 사원들의 인원수를 출력하시오. (사원의 수가 4명 이상인 것만 출력)
+SELECT JOB AS 직책, COUNT(*) AS 사원수 FROM EMP
+GROUP BY JOB
+HAVING COUNT(*)>=4;
+
+Q15 JOB 중에 가장 적게 수입(SAL+COMM)을 가지는 직무의 평균월급(SAL)을 출력하시오.
+SELECT JOB, SUM(SAL+NVL(COMM,0)), AVG(SAL) FROM EMP
+GROUP BY JOB
+HAVING MIN(SUM(SAL+COMM));
+?????
+※ 서브쿼리 사용
+SELECT JOB, AVG(SAL) FROM EMP
+GROUP BY JOB
+HAVING MIN(SAL+NVL(COMM,0)) =
+(SELECT MIN(SAL+NVL(COMM,0)) FROM EMP);
+
+Q16 사원수가 5명 이상인 부서의 부서번호와 사원수를 출력하시오.
+SELECT DEPTNO, COUNT(*) FROM EMP
+GROUP BY DEPTNO
+HAVING COUNT(*)>=5;
+
+SELECT DEPTNO, COUNT(DEPTNO) FROM EMP
+GROUP BY DEPTNO
+HAVING COUNT(*)>=5;

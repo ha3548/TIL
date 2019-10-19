@@ -1,0 +1,8 @@
+SELECT * FROM a WHERE c1 LIKE ?     <- "%가나다%"
+             		% ? %       <- 쓸수없음
+             		#{doro}   <- 바인드변수 대신하는 마이바티스 기호 : #
+
+SELECT * FROM a WHERE c1 LIKE '%${ }%'    <- "가나다"
+
+String type일 때는, value를 써야한다
+-> SELECT * FROM a WHERE c1 LIKE '% ${value} %'

@@ -1,0 +1,141 @@
+자바언어
+   특징
+  * 객체지향언어 [ JAVA, C++ C# ]
+   - 목적 : 클래스의 재사용성을 높이자
+   - 조건 : 상속, 캡슐화, 다형성
+     Overload : 목적이 같은 기능의 내용을 다르게 작성한다.
+      int plus(int a, int b){ return a+b; }
+      double plus(double a, double b){ return a+b; }
+------------------------------------------------------
+     static void m(S s){
+     System.out.print("우리 회사의 주력사업은 : " + s.toString());
+     }
+
+     public static void main( ~~){
+     Se s = new SE();
+     // S s = new SE(); // 업캐스팅 (부모타임으로 업캐스팅)
+     // S s = new S();
+     m(s);
+     }
+
+class S{
+String toString() { return "설탕"; }
+}
+
+class SE extends S{ // 전자
+String toString() { return "전자"; }
+}
+
+class SD extends S{ // 디스플레이
+String toString() { return "디스플레이"; }
+}
+
+------------------------------------------------------
+  * 플랫폼에 독립적
+     Window OS -에서 컴파일한 .class 파일을
+     Linux OS에 붙여넣기한 후 실행가능하다.
+-> 실행 가능하게 하려면 JVM이 메모리 관리해줘야함
+
+  * JVM이 메모리 관리
+
+
+오라클 : 연결포트 #1521
+객체 - 테이블 뷰 시퀀스
+스키마 - 객체집합
+* JDBC 절차
+1) DB 연결
+ - Connection
+2) SQL 송신
+ - Statement, PreparedStatement
+3) SQL 결과수신
+ - ResultSet
+4) DB 연결 닫기
+ - close()
+
+
+--------------
+package javaJDBCexample;
+
+import java.sql.*;
+
+public class QueryDB {
+
+	public static void main(String[] args) {
+
+		String DB_URL = "jdbc:oracle:thin:@localhost:1521:xe";
+		String DB_USER = "c##ora_user";
+		String DB_PW = "kang";
+
+		Connection conn = null;
+		Statement stmt = null;
+		ResultSet rs = null;
+
+		String query = "select * from emp";
+
+		// 드라이버 ->
+		try {
+			Class.forName("oracle.jdbc.driver.OracleDriver");
+		} catch (ClassNotFoundException e) {
+		}
+
+		try {
+			conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PW);
+			stmt = conn.createStatement();
+			rs = stmt.executeQuery(query);
+
+			while (rs.next()) {
+				int num = rs.getInt(1);
+				String name = rs.getString(2);
+				System.out.print(num + " ");
+				System.out.println(name);
+			}
+		} catch (Exception e) {
+		} finally {
+			try {
+				rs.close();
+				stmt.close();
+				conn.close();
+			} catch (SQLException e) {
+
+			}
+		}
+	}
+}
+
+-----------------
+A.java 내용
+  class A{
+	int i;
+	static int si;
+	public static void main(String[] args){
+		Class.forName("com.my.Other");
+	}
+}
+-------------------------
+클래스 실행 순서
+ex) C:\ > java -cp bin;d:\ojdbc6.jar A (bin 경로에 있는 A 클래스)
+(1) bin\A.class 파일 찾기
+(2) A.class 파일을 JVM에 올린다 (로드)
+(3) 바이트코드 검증
+(4) 바이트코드를 바이너리(0,1)로 재해석
+(5) class 영역에 기억시킨다
+(6) static 변수 초기화
+(7) main() 호출됨
+
+2)
+* PreparedStatement 조인
+
+SELECT *
+FROM A a, B b
+WHERE a.ac = b.bc;
+
+표준화 된 조인 처리 (권장)
+SELECT *
+FROM A a
+JOIN B b
+ON a.ac = b.bc;
+
+1) Connection
+(1) JDBC 드라이버 로드
+Class.forName("oracle.jdbc.driver.OracleDriver"); // OracleDriver 이라는 클래스를 찾아라
+(2) DB와 연결

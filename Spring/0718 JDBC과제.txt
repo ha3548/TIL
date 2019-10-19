@@ -1,0 +1,22 @@
+JDBC 절차
+1) JDBC 드라이버로드 Class.forName(~~)
+
+2) DB 연결 Connection conn = ~~
+
+3) SQL 구문 송신 String selectSQL = "SELECT * FROM customer WHERE id=?";
+
+                      PreparedStatement pstmt = ~~
+	          pstmt.setString(1, id);
+
+4) SQL 결과 수신 ResultSet rs = pstmt.executeQuery(selectSQL);
+
+5) 결과 확인
+if(rs.next()){
+      if(pwd.equals(rs.getString("pwd")){ // 로그인 성공
+      }
+}
+
+6) 연결 닫기
+rs.close();
+pstmt.close();
+conn.close();

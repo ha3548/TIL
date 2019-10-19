@@ -1,0 +1,78 @@
+<주입> 필요할때마다 값을 주입해서 사용
+
+1) 고정값출력
+public class A {
+    private String msg="안녕하세요";
+    public String toString() { return msg; }
+}
+
+A a = new A( );
+sop(a); //a.toString( )자동호출
+-> 결과: 안녕하세요
+
+2) 주입값 출력
+public class A {
+    private String msg;
+    public void setMsg(String msg) { this.msg=msg; }
+    public void getMsg( ){ return msg; }
+    public String toString( ) { return msg; }
+}
+
+A a = new A( );
+a.setMsg("HELLO");
+sop(a);
+-> 결과: HELLO
+
+--------------------------------------------------------------------------------------------------------------------------------------------------
+<의존성 주입> ★의존성? 인터페이스-클래스 관계
+사용자(조립자)가 어떤 객체를 주입할지 결정
+B1,B2(실체있음)는 B(인터페이스, 실체없음)에 의존성을 갖는 객체이고,
+a를 사용하는 사용자가 어떤 B타입의 객체를 주입할지 결정하는 것
+
+public inerface B {
+    String b( );
+}
+public class B1 implements B {
+    public String b( ){ return b1; }
+}
+public class B2 implements B {
+    public String b( ){ return b2; }
+}
+public class A {
+    private B b; //B와 관계를 맺고있음
+    public void setB(B b) { this.b=b; }
+    public B getB( ){ return b; }
+    public String toString( ) { return b.b( ); }
+}
+
+A a = new A( );		A a1 = new A( ); ------>XML파일을 만들어서 거기서 설정할것임(객체별로 XML파일만 생성해주면 된다)
+a.setB( new B1( ) );		a1.setB( new B2( ) );
+sop(a); //"b1"		sop(a1); //"b2"
+
+--------------------------------------------------------------------------------------------------------------------------------------------------
+<!-- bean태그를 사용하면 새로운 객체를 생성하는 것 -->
+<!-- class(java파일)만 봐서는 어떤 객체(실체)를 사용하는지 모르지만, XML파일 bean태그를 보면 알수있다 (사용자,조립자가 결정) -->
+
+//setter메서드를 통해 주입
+public class A {
+    private B b;
+    public void setB(B b) { this.b=b; } //요기
+    public B getB( ){ return b; }
+    public String toString( ) { return b.toString( ); }
+}
+
+//생성자를 통해 주입
+public class A {
+    private B b;
+    public A(B b) { this.b=b; } //요기
+    public String toString( ) { return b.toString( ); }
+}
+
+-----------------------------------------------------------------------------------------------------------------------------------
+<spring에서 myBatis사용하기>
+1) java project 생성 후 convert to maven project로 변환
+2) pom.xml파일에 <dependency>추가로 spring-context 관련 라이브러리 다운
+* mybatis-spring을 사용하려면? spring jdbc & spring mybatis 라이브러리 다운
+3) spring tool suite 플러그인 설치
+4) spring 설정파일(ex:beans.xml) 만들기
+

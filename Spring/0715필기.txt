@@ -1,0 +1,25 @@
+1. <a href="join.html">
+2. Rendering Engine
+3. Join.html에 요청
+4. Networking에 응답
+5. Rendering Engine 전달
+6. <a href="join.html"> 전달, 화면지우고 응답내용으로 렌더링
+
+* XHTTR(XML HTTP Request)
+: AJAX(JavaScript-XML)기술을 위한 객체, 비동기(요청-응답)일처리 가능, 화면을 지우지 않는다
+ex) 지도앱
+
+* HTTP Request
+1) 요청방식(default=GET방식)
+- GET: message body 사용X
+        (요청시 전달될 값이 URL뒷부분에 채워짐=query string) -> 보안성떨어짐
+- POST: message body 사용O
+        (요청시 전달될 값이 message body에 채워짐)
+
+
+
+
+
+
+
+

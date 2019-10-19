@@ -1,0 +1,224 @@
+<객체>
+-테이블
+-뷰: 자체데이터 없음, 테이블의 데이터를 보거나 변경
+-시퀀스: 고유번호를 자동생성
+-인덱스: 기본키는 자동으로 인덱스 생성
+	But, 기본키가 아닌 다른 칼럼을 빨리 검색하고 싶으면 사용자가 생성
+
+<DDL>: 객체를 생성/수정/삭제
+-CREATE TABLE [테이블명] (
+	[칼럼명1] DATATYPE(DEFAULT 형식), ··· );
+-ALTER TABLE [테이블명] MODIFY ([컬럼명] [데이터타입] [제약조건]);
+-DROP TABLE [테이블명];
+
+※ 데이터타입
+-CHAR(s): 고정길이 문자열, s는 최대 2000byte
+-VARCHAR2(s): 가변길이 문자열, s는 최대 4000byte
+-NUMBER(p,s): p는 최대정밀도 1~38, s는 소수점 위치지정 -84~127
+-DATE: 날짜+시각
+
+Ex)
+CREATE TABLE account (
+	no NUMBER(4) PRIMARY KEY,
+	date DATE,
+	code VARCHAR2(14),
+	withdraw NUMBER(8),
+	deposit NUMBER(10),
+	balance NUMBER(12),
+	branchcode CHAR(8)
+);
+
+Q1 다음 테이블(nike)을 만드시오 ※ 기본키로 지정 or 길이가 짧으면 CHAR!
+CREATE TABLE nike (
+	n_id CHAR(10) PRIMARY KEY,
+	n_style VARCHAR2(20),
+	n_color VARCHAR2(20),
+	n_owner VARCHAR2(12),
+	c_size CHAR(3),
+	n_gender CHAR(1),
+	n_count NUMBER(10),
+	m_date DATE
+);
+
+Q2 student 테이블 정보를 가져와 student_test 테이블을 생성하라.
+create table student_test
+as select * from student;
+
+테이블명 변경
+RENAME student_test TO students;
+
+칼럼명 변경
+ALTER TABLE students
+RENAME column stu_no TO stu_number;
+
+칼럼 추가
+ALTER TABLE students
+ADD (stu_bmi number(5,2));
+
+칼럼 타입 변경
+ALTER TABLE students
+MODIFY (stu_bmi VARCHAR2(20));
+
+칼럼 삭제
+ALTER TABLE students
+DROP column stu_bmi;
+
+※ 무결성 제약조건(CONSTRAINT)
+-PRIMARY KEY
+-NOT NULL
+-DEFAULT
+-UNIQUE: 고유값, 중복X
+-CHECK: 해당 칼럼에 저장간으한 데이터 값의 범위/조건 지정
+
+※ CONSTRAINT 명령어를 쓰지 않으면 자동으로 만들어진다
+   But, 이름을 시스템 마음대로 짓기 때문에 직접 쓰는게 좋다!
+
+※ 제약조건은 USER_COMSTRAINTS 뷰를 통해서 확인 할 수 있음 ?????
+select CONSTRAINT_NAME
+from USER_CONSTRAINTS
+where TABLE_NAME = 'emp';
+
+Ex1) 제약조건 추가(기본키)
+ALTER TABLE students
+ADD CONSTRAINT pk_students PRIMARY KEY (stu_number);
+
+Ex2) 제약조건 삭제(기본키)
+ALTER TABLE students
+DROP CONSTRAINT pk_students;
+
+Ex3) 제약조건 추가(UNIQUE)
+ALTER TABLE students
+ADD CONSTRAINT uni_stu_height UNIQUE (stu_height);
+
+CREATE TABLE EMP3(
+	MPNO 	NUMBER		CONSTRAINT pk_empno PRIMARY KEY,
+	ENAME 	VARCHAR2(20) 	CONSTRAINT nn_ename NOT NULL,
+	JOB 	VARCHAR2(20) 	CONSTRAINT uni_job UNIQUE,
+	MGR 	NUMBER	 	CONSTRAINT ck_mgr CHECK (MGR BETWEEN 1 AND 9999),
+	HIREDATE DATE 		DEFAULT SYSDATE
+);
+
+Q3 다음 테이블(adidas)를 만드시오.
+CREATE TABLE adidas (
+	a_id CHAR(10) 		CONSTRAINT pk_id PRIMARY KEY,
+	a_style VARCHAR2(20) 	CONSTRAINT uni_style UNIQUE,
+	a_color VARCHAR2(20) 	CONSTRAINT nn_color NOT NULL,
+	a_owner VARCHAR2(12),
+	c_size CHAR(3) 		CONSTRAINT ck_size CHECK(c_size IN('XS','S','M','L','XL','XXL')),
+	a_gender CHAR(1) 	CONSTRAINT ck_gender CHECK (a_gender IN('M','F')),
+	a_count NUMBER(10),
+	m_date DATE 		DEFAULT SYSDATE
+);
+
+Q4 adidas 테이블을 변경하시오.
+ALTER TABLE adidas MODIFY (a_owner VARCHAR2(12) CONSTRAINT nn_owner NOT NULL);
+ALTER TABLE adidas DROP	CONSTRAINT ck_size;
+ALTER TABLE adidas ADD 	CONSTRAINT ck_count CHECK(a_count BETWEEN 0 AND 1000);
+ALTER TABLE adidas ADD 	CONSTRAINT uni_date UNIQUE(m_date);
+
+※ ALTER TABLE [테이블 명] MODIFY [컬럼 명] [데이터 타입] CONSTRAINT [제약조건 이름] NOT NULL; -> NOT NULL은 ADD가 아닌 MODIFY로 써준다(추가X 변경O)
+
+※ 제약조건명 변경
+ALTER TABLE adidas
+RENAME CONSTRAINT sys_c007330 TO nn_owner;
+
+
+Q5 다음 테이블 3개(students, modules, marks)를 만드시오.
+
+CREATE TABLE students(
+STUDENT_NO CHAR(8) CONSTRAINT pk_student_no PRIMARY KEY,
+SURNAME VARCHAR2(20),
+FORENAME VARCHAR2(20)
+);
+
+INSERT INTO students VALUES(20060101, 'Dickens', 'Charles');
+INSERT INTO students VALUES(20060102, 'ApGwilym', 'Dafydd');
+INSERT INTO students VALUES(20060103, 'Zola', 'Emile');
+INSERT INTO students VALUES(20060104, 'Mann', 'Thomas');
+INSERT INTO students VALUES(20060105, 'Stevenson', 'Robert');
+
+CREATE TABLE modules(
+MODULE_CODE CHAR(6) CONSTRAINT pk_code PRIMARY KEY,
+MODULE_NAME VARCHAR2(20)
+);
+
+INSERT INTO modules VALUES('CM0001', 'Databases');
+INSERT INTO modules VALUES('CM0002', 'Middle Ware');
+INSERT INTO modules VALUES('CM0003', 'Operating Systems');
+INSERT INTO modules VALUES('CM0004', 'Graphics');
+
+
+CREATE TABLE marks(
+STUDENT_NO CHAR(8),
+MODULE_CODE CHAR(6),
+MARK NUMBER(2)
+);
+
+INSERT INTO marks VALUES(20060101, 'CM0001', 80);
+INSERT INTO marks VALUES(20060101, 'CM0002', 65);
+INSERT INTO marks VALUES(20060101, 'CM0003', 50);
+INSERT INTO marks VALUES(20060102, 'CM0001', 75);
+INSERT INTO marks VALUES(20060102, 'CM0003', 45);
+INSERT INTO marks VALUES(20060102, 'CM0004', 70);
+INSERT INTO marks VALUES(20060103, 'CM0001', 60);
+INSERT INTO marks VALUES(20060103, 'CM0002', 75);
+INSERT INTO marks VALUES(20060103, 'CM0004', 60);
+INSERT INTO marks VALUES(20060104, 'CM0001', 55);
+INSERT INTO marks VALUES(20060104, 'CM0002', 40);
+INSERT INTO marks VALUES(20060104, 'CM0003', 45);
+INSERT INTO marks VALUES(20060105, 'CM0001', 55);
+INSERT INTO marks VALUES(20060105, 'CM0002', 50);
+
+
+Q6 테이블을 변경하시오.
+1.
+RENAME students TO students_1;
+2.
+ALTER TABLE students_1
+DROP column FORENAME;
+3.
+ALTER TABLE students_1
+ADD (FORENAME VARCHAR2(20));
+4.
+ALTER TABLE students_1
+ADD CONSTRAINT uni_forename UNIQUE(forename);
+5.
+ALTER TABLE students_1
+MODIFY (FORENAME VARCHAR2(20) CONSTRAINT nn_forename NOT NULL);
+6.
+ALTER TABLE students_1
+DROP CONSTRAINT pk_student_no;
+7.
+ALTER TABLE students_1
+ADD CONSTRAINT pk_student_no PRIMARY KEY (student_no);
+8.
+ALTER TABLE students_1
+ADD CONSTRAINT ck_student_no CHECK(student_no BETWEEN 20060001 AND 20069999);
+9.
+ALTER TABLE marks
+RENAME column mark TO marks;
+10. 
+ALTER TABLE marks
+MODIFY (marks NUMBER(2,0));
+
+※ 큰수->작은수 변경은 ERROR! 작은수->큰수 OK!
+
+11-1.
+INSERT INTO modules VALUES('CM0002', 'Middle Ware');
+
+11-2. ★
+ALTER TABLE marks
+ADD CONSTRAINT fk_mod FOREIGN KEY (MODULE_CODE)
+REFERENCES modules(MODULE_CODE);
+-> marks 테이블에서는 외래키, modules 테이블에서는 기본키
+
+12.
+INSERT INTO marks VALUES(20060105, 'CM0006', 65);
+
+Q7 enrol 테이블 외래키 설정(stu_no)
+ALTER TABLE enrol
+ADD CONSTRAINT fk_stu_no FOREIGN KEY (stu_no)
+REFERENCES student(stu_no);
+
+INSERT INTO enrol
+VALUES('101', '11111111', 100); -> ERROR!

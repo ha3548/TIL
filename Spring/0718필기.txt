@@ -1,0 +1,73 @@
+*WEB CLIENT
+http://localhost:8080/web8/jq/layout.html
+
+*WEB SERVER: 웹컨텍스트, 웹어플리케이션, 웹모듈
+web8
+  -jq
+     -layout.html   <html><head> ···
+  -a.jsp
+
+  -c.jsp
+1) db와 연결
+2) 자료추가
+3) 결과응답: 가입성공/가입실패 -> CLIENT로 전송
+
+* ClientSide 기술
+.html js css txt jpg...
+
+* ServerSide 기술
+기술		언어	웹서버
+servlet / jsp	java	Tomcat, resin, 웹로직, 웹스피어, 제우스
+asp		vb	I I S
+php		c.perl	apache
+
+
+Tomcat은 불안정성이 크다 -> 여러 서버를 합쳐서(연동해서) 사용한다
+Ex) Tomcat + Apache
+(servlet/jsp를 실행시키는 엔진) + (웹서버)
+
+* 플랫폼? 어플리케이션이 실행되는 환경
+자바플랫폼: 자바어플리케이션이 실행되는 환경
+- 구성요소
+  JVM + SE API [java.lang, java.util, java.sql, java.net ...]
+  JVM + SE,EE API [javax.servlet.http, javax.servlet.jsp ...]  V
+
+1) JAVA SE(Standard edition)
+  - StandAlone Application
+  - C/S Application
+  - UI Application
+
+2) JAVA EE
+  - Web Application  V
+  - EJB Application
+
+3) JAVA ME
+  - smartcard Application
+
+* ~~let
+: Spec을 지켜줘야함, main()없이 실행
+1) public class
+2) extends HttpServlet
+3) 요청방식이 GET인 경우 public void doGet(HttpServletRequest, HttpServletResponse)
+	    POST인 경우 public void doPost(HttpServletRequest, HttpServletResponse) 오버라이딩한다.
+- Booklet: 에서 실행되는 어플리케이션
+- Servlet: 서버에서 실행
+- Middlet: 모바일에서 실행
+- Applet: 웹브라우저에서 실행
+
+----------------------------------------------------
+<login.html>
+   ID   : <input type="text" name="id">
+   비번: <input type="password" name="pwd">
+   <button type="submit">로그인</button>
+   <button type="button">가입</button>
+----------------------------------------------------
+<FirstServlet.java> ★.getParameter("···")
+protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	System.out.println("FirstServlet의 doGet()호출됨");
+	String id = request.getParameter("id");
+	String pwd = request.getParameter("pwd");
+}
+요청방식: GET
+요청URL: /first
+요청전달데이터: id=aaa & pwd=bbb

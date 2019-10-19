@@ -1,0 +1,25 @@
+<Collection> Value만 저장
+- List : index제공, 순차저장O, 중복저장O
+- Set : index없음, 순차저장X, 중복저장X
+
+<Map> Key와 Value 저장
+index없음, 값 중복허용, 키 중복불가->빠른검색
+
+Ex)
+public class Product {
+  Product p1 = new Product( );
+  Product p2 = new Product( );
+
+  p1.setProd_no("10001");
+  p2.setProd_no("10001");
+
+  map.put(p1, 3);	//p1상품 3개
+  map.put(p2, 2);	//p2상품 2개
+
+  Product p3 = new Product( );
+  p3.setProd_no("10001");
+  map.get(p3);
+}
+
+결과: get으로 찾아오지 못한다.
+이유: Value 메모리번지수는 '10001'의 주소로 같지만, Key는 중복되지 않는다.

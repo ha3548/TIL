@@ -1,0 +1,12 @@
+jsonObj.put("status",1);
+Product p = ~~~;
+//jsonObj.put("product", p);
+//==>
+// {"status":1, "product":"Product@XXXXXX"} (X)
+
+JSONObject pObj = new JSONObject();
+pObj.put("prod_no", p.getProd_no());
+pObj.put("prod_name", p.getProd_name());
+jsonObj.put("product", pObj);
+==>
+{"status":1, "product":{"prod_no":"10001", "prod_name":"아메리카노}}

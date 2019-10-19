@@ -1,0 +1,154 @@
+Q1 사원번호, 사원이름, 부서이름을 출력하는데, 부하직원수가 적은 순으로 검색하시오.
+A1) 부하직원 있는사람만 출력
+select e.mgr, e2.ename, d.dname, count(*)
+from emp e, emp e2, dept d
+where e.mgr = e2.empno and e2.deptno=d.deptno
+group by e.mgr, e2.ename, d.dname
+order by count(*), e.mgr;
+
+A2) 부하직원이 없는사람도 출력 ★
+select e.empno, e.ename, d.dname, count(e2.mgr)
+from emp e LEFT OUTER JOIN emp e2 ON e.empno = e2.mgr
+		      JOIN dept d ON e.deptno = d.deptno
+group by e.empno, e.ename, d.dname
+order by count(e2.mgr);
+
+Q2 사원 JAMES의 사원번호, 이름, 급여, 부서명과 그의 매니저 이름, 매니저 부서명을 출력하시오.
+select e.empno, e.ename, e.sal, d.dname, e2.ename, d2.dname
+from emp e, emp e2, dept d, dept d2
+where e.mgr = e2.empno and e.deptno = d.deptno and e2.deptno = d2.deptno
+and e.ename='JAMES';
+
+
+<서브쿼리>
+Q1 평균급여를 구하라.
+select avg(sal) from emp;
+
+Q2 평균 급여보다 높은 사원의 이름, 급여를 구하라.
+select ename, sal
+from emp
+where sal>=(select avg(sal) from emp);
+
+Q3 부서 평균급여가 전체직원 평균급여보다 많은 부서의 이름, 부서 평균급여를 출력하시오.
+나)
+select d.dname, round(avg(e.sal))
+from dept d, emp e
+where d.deptno = e.deptno
+group by d.dname
+having avg(e.sal)>=(select avg(sal) from emp);
+쌤)
+select d.dname, round(avg(sal))
+from emp NATURAL JOIN dept d
+group by deptno, d.dname
+having avg(sal)>=(select avg(sal) from emp);
+
+Q4 SCOTT 사원보다 많은 급여를 받는 사원정보를 출력하시오.
+select ename, sal from emp
+where sal>(select sal from emp
+	  where ename='SCOTT');
+
+Q5 CHICAGO에서 근무하지 않은 모든 사람의 정보를 출력하시오.
+나)
+select *
+from emp NATURAL JOIN dept
+where loc<>'CHICAGO'
+order by deptno, empno;
+쌤)
+select *
+from emp
+where deptno <> (select deptno from dept
+		where loc='CHICAGO');
+
+Q6 SALESMAN의 커미션 평균을 출력하시오.
+select avg(NVL(comm,0)) from emp
+where job='SALESMAN';
+
+select avg(com)
+from (select NVL(comm,0) as com from emp
+       where JOB='SALESMAN');
+
+Q7 옥한빛 학생보다 키가 큰 학생들의 이름, 학과, 키를 출력하시오.
+(단, 키 정보가 없는 학생은 제외하시오.)
+select stu_name, stu_dept, stu_height
+from student
+where stu_height IS NOT NULL
+and stu_height>(select stu_height from student
+		where stu_name='옥한빛');
+※ 다대다 비교하는법
+select stu_name, stu_dept, stu_height
+from student
+where stu_height IS NOT NULL
+and (stu_name, stu_height) = (select stu_name, stu_height from student
+			where stu_height>177);
+
+<다중열 서브쿼리>
+Q 각 부서별 최소 급여를 받는 사원의 이름과 급여를 구하라.
+1) 부서별 최소급여
+select deptno, min(sal) from emp
+group by deptno;
+
+2) IN ※ 하나라도 일치하면 출력
+select ename, sal from emp
+where (deptno, sal)
+IN (select deptno, min(sal) from emp
+     group by deptno)
+order by sal;
+
+
+Q8 컴퓨터정보과의 최소신장과 각 학과 최소신장을 가진 학생을 비교하여
+컴퓨터정보과 최소신장보다 큰 학과의 학과명과 최소신장을 출력하시오.
+(hint: from에 새롭게 정보를 넣을것!)
+
+-컴퓨터정보166
+select min(stu_height) from student
+where stu_dept='컴퓨터정보';
+
+-기계154/전기전자168/컴퓨터정보166
+select stu_dept, min(stu_height)
+from student
+group by stu_dept;
+
+나)
+select stu_dept, min(stu_height) from student
+group by stu_dept
+having min(stu_height) > (select min(stu_height) from student where stu_dept='컴퓨터정보');
+
+
+※ 새로운 테이블 생성 후 연결 ★
+select d, min_h
+from (select stu_dept d, min(stu_height) min_h
+	from student
+	group by stu_dept)
+where min_h>(select min(stu_height) from student
+		where stu_dept='컴퓨터정보');
+
+Q9 모든학생의 학번, 학생명, 학과명, 키, 소속된 학과의 평균키를 출력하시오.
+(hint: 학과명, 학과평균키를 갖는 테이블을 생성하여 학생테이블과 서브조인)
+1)
+select stu_no, stu_name, stu_dept, stu_height
+from student;
+
+2) 기계164/전기전자178/컴퓨터정보171
+select stu_dept, round(avg(stu_height))
+from student
+group by stu_dept;
+
+A)
+select stu_no, stu_name, s.stu_dept, stu_height, avg_h
+from student s, (select stu_dept, round(avg(stu_height)) avg_h
+		from student
+		group by stu_dept) d_avg_h
+where s.stu_dept = d_avg_h.stu_dept;
+
+
+Q10 20번부서 사원과 직무는 같고, 부서는 다른 사원의 정보를 검색하시오.
+(hint: IN ANY SOME)
+1) 20번부서 사원->5명, 직무->MANAGER/ANALYST/CLERK
+select job from emp
+where deptno=20;
+
+A)
+select * from emp
+where job IN(select job from emp
+		where deptno=20)
+and deptno<>20;

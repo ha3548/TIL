@@ -1,0 +1,297 @@
+SET PAGESIZE 20
+SET LINESIZE 100
+COL JOB FORMAT A10
+COL ENAME FORMAT A10
+
+Q1 부서번호 별로 정렬하여 모든 정보를 출력하는데 부서별 급여가 높은 사원부터 출력하시오.
+SELECT *
+FROM EMP
+ORDER BY DEPTNO, SAL DESC;
+
+Q2 부서번호별 평균 임급을 출력하시오. (단, 평균임금이 2000이하인 부서는 제외)
+SELECT DEPTNO, AVG(SAL) FROM EMP
+GROUP BY DEPTNO
+HAVING AVG(SAL)>2000
+ORDER BY DEPTNO;
+
+※ 집계함수(sum, avg, ...)가 들어가면 GROUP BY가 들어가겠구나 -> 바로생각하자!
+
+Q3 직무 중 가장 적게 수입(SAL+COMM)을 가지는 직무의
+평균 월급(SAL)을 출력하시오. ★??
+A1)
+SELECT MIN(AVG(SAL)) FROM EMP
+GROUP BY JOB;
+
+SELECT MIN(AVG(SAL+NVL(COMM,0))) FROM EMP
+GROUP BY JOB;
+
+SELECT AVG(SAL) FROM EMP
+GROUP BY JOB;
+
+A2) 서브쿼리
+SELECT JOB, AVG(SAL) FROM EMP
+GROUP BY JOB
+HAVING MIN(SAL+NVL(COMM,0)) =
+(SELECT MIN(SAL+NVL(COMM,0)) FROM EMP);
+
+Q4 기계과 학생들 중 학년별 평균신장이 160 이상인 학년과 평균신장을 출력하시오.
+SELECT stu_grade, AVG(stu_height) FROM student
+WHERE stu_dept='기계'
+GROUP BY stu_grade
+HAVING AVG(stu_height)>=160;
+
+Q5 최대신장이 175이상인 학과와 학과별 최대신장을 출력하시오.
+SELECT stu_dept, MAX(stu_height) FROM student
+GROUP BY stu_dept
+HAVING MAX(stu_height)>=175;
+
+Q6 학과별 평균신장 증 가장 높은 평균신장을 출력하시오. ★
+A1)
+SELECT MAX(AVG(stu_height)) FROM student
+GROUP BY stu_dept;
+
+A2) 학과도 같이보고 싶으면 -> 서브쿼리
+SELECT stu_dept, AVG(stu_height) FROM student
+GROUP BY stu_dept
+HAVING AVG(stu_height) =
+(SELECT MAX(AVG(stu_height)) FROM student
+GROUP BY stu_dept);
+
+<EQUI JOIN>
+Q7 사원번호, 사원이름, 부서이름, 부서번호를 출력하시오.
+A1) Equi (Oracle)
+select e.empno, e.ename, d.dname, d.deptno
+from emp e, dept d
+where e.deptno = d.deptno;
+
+A2) NATURAL -> 알아서 엮어줌, 구분자 필요X
+select empno, ename, dname, deptno
+from emp NATURAL JOIN dept;
+
+A3) JOIN ~ ON -> 디테일을 잡아줘야 함
+select empno, ename, dname, EMP.deptno
+from emp JOIN dept ON EMP.deptno = DEPT.deptno;
+
+A4) JOIN ~ USING
+select empno, ename, dname, deptno
+from emp JOIN dept USING(deptno);
+
+
+Q8 부서가 30이고, 급여가 1500이상인 사원의 이름, 부서명, 급여를 출력하시오.
+A1) Equi (Oracle)
+select e.ename, d.dname, e.sal
+from emp e, dept d
+where e.deptno='30' and e.sal>=1500
+and e.deptno = d.deptno;
+
+A2) NATURAL
+select ename, dname, sal
+from emp NATURAL JOIN dept
+where deptno='30' and sal>=1500;
+
+A3) JOIN ~ ON
+select ename, dname, sal
+from emp JOIN dept ON emp.deptno = dept.deptno
+where emp.deptno='30' and emp.sal>=1500;
+
+A4) JOIN ~ USING
+select ename, dname, sal
+from emp JOIN dept USING(deptno)
+where deptno='30' and sal>=1500;
+
+
+Q9 사원수가 5명이 넘는 부서의 부서명과 사원수를 출력하시오. ★Where(X) Having(O)
+A1) Equi (Oracle)
+select d.dname, count(*) from dept d, emp e
+where d.deptno = e.deptno
+group by d.dname, e.deptno -> e.deptno은 생략가능
+having count(*)>=5;
+
+A2) NATURAL
+select dname, count(*)
+from emp NATURAL JOIN dept
+group by dname
+having count(*)>=5;
+
+A3) JOIN ~ ON
+select dname, count(*)
+from emp JOIN dept on emp.deptno = dept.deptno
+group by dname
+having count(*)>=5;
+
+A4) JOIN ~ USING
+select dname, count(*)
+from emp JOIN dept USING(deptno)
+group by dname
+having count(*)>=5;
+
+
+Q10 각 부서의 이름과 가장 많은 월급의 크기를 출력하시오.
+A1) Equi (Oracle)
+select d.dname, MAX(e.sal) from dept d, emp e
+where d.deptno = e.deptno
+group by d.dname;
+※ MAX(sal)로 써도 emp에만 있는 칼럼이라 알아서 잡아주긴 하지만, 정확히 써주는게 좋다!
+
+A2) NATURAL
+select dname, MAX(sal)
+from dept NATURAL JOIN emp
+group by dname;
+
+A3) JOIN ~ ON
+select dname, MAX(sal)
+from dept JOIN emp ON dept.deptno = emp.deptno
+group by dname;
+
+A4) JOIN ~ USING
+select dname, MAX(sal)
+from dept JOIN emp USING(deptno)
+group by dname;
+
+
+Q11 ADAMS 사원이 근무하는 부서이름과 지역이름을 출력하시오.
+A1) Equi (Oracle)
+select d.dname, d.loc from dept d, emp e
+where d.deptno = e.deptno
+and e.ename='ADAMS';
+
+A2) NATURAL
+select dname, loc
+from dept NATURAL JOIN emp
+where ename='ADAMS';
+
+A3) JOIN ~ ON
+select dname, loc
+from dept JOIN emp ON dept.deptno = emp.deptno
+where ename='ADAMS';
+
+A4) JOIN ~ USING
+select dname, loc
+from dept JOIN emp USING(deptno)
+where ename='ADAMS';
+
+
+Q12 NEW YORK이나 DALLAS 지역에 근무하는 사원들의 사원번호, 사원이름을
+사원번호 순으로 검색하시오.
+A1) Equi (Oracle)
+select d.loc, e.empno, e.ename from dept d, emp e
+where d.deptno = e.deptno
+and (d.loc='NEW YORK' or d.loc='DALLAS')
+order by e.empno;
+
+A2) NATURAL
+select loc, empno, ename
+from dept NATURAL JOIN emp
+where loc='NEW YORK' or loc='DALLAS'
+order by empno;
+
+A3) JOIN ~ ON
+select loc, empno, ename
+from dept JOIN emp ON dept.deptno = emp.deptno
+where loc='NEW YORK' or loc='DALLAS'
+order by empno;
+
+A4) JOIN ~ USING
+select loc, empno, ename
+from dept JOIN emp USING(deptno)
+where loc='NEW YORK' or loc='DALLAS'
+order by empno;
+
+
+Q13 부서이름이 ACCOUNTING 이거나, 지역이름이 CHICAGO인 사원의
+사원번호와 사원이름을 검색하시오.
+A1) Equi (Oracle)
+select e.empno, e.ename, d.dname, d.loc from emp e, dept d
+where d.deptno = e.deptno
+and (d.dname='ACCOUNTING' or d.loc='CHICAGO');
+
+A2) NATURAL
+select empno, ename, dname, loc
+from emp NATURAL JOIN dept
+where dname='ACCOUNTING' or loc='CHICAGO';
+
+A3) JOIN ~ ON
+select empno, ename, dname, loc
+from emp JOIN dept ON dept.deptno = emp.deptno
+where dname='ACCOUNTING' or loc='CHICAGO';
+
+A4) JOIN ~ USING
+select empno, ename, dname, loc
+from emp JOIN dept ON dept.deptno = emp.deptno
+where dname='ACCOUNTING' or loc='CHICAGO';
+
+<NON-EQUI JOIN>
+Q14 sal 등급확인
+select e.ename, e.sal, s.grade
+from emp e, salgrade s
+where e.sal between s.losal and s.hisal; -> 이 줄이 non-equi 조인
+where e.sal>=s.losal and e.sal<=s.hisal; -> between 부등호로 바꾼거
+
+Q15 사원번호, 사원이름, 급여, 급여등급을 급여등급별 사원번호 순으로 검색하시오.
+select e.empno, e.ename, e.sal, s.grade
+from emp e, salgrade s
+where e.sal between s.losal and s.hisal
+order by s.grade, e.empno;
+order by 4,1;
+
+※ 칼럼명 정렬 숫자로 가능 ex) 4=s.grade / 1=e.empno
+
+<SELF JOIN>
+Q16 사원번호로 상사가 누구인지 구하기
+select e.ename 사원, e2.ename 상사
+from emp e, emp e2
+where e.mgr = e2.empno;
+
+<INNER JOIN>???-> sub_no때문에 예상값이랑 결과값이 다름!
+select s.stu_no
+from enrol e INNER JOIN student s
+ON e.stu_no = s.stu_no;
+
+<OUTER JOIN>
+FULL / LEFT / RIGHT
+
+Q17 부서번호가 40인 정보(NULL)도 뜨도록 외부조인하시오.
+RIGHT)
+select e.empno, e.ename, d.deptno
+from emp e RIGHT OUTER JOIN dept d
+ON e.deptno = d.deptno;
+
+select e.empno, e.ename, d.deptno
+from dept d, emp e
+where d.deptno = e.deptno(+);
+
+LEFT)
+select e.empno, e.ename, d.deptno
+from dept d LEFT OUTER JOIN emp e
+ON e.deptno = d.deptno;
+
+select e.empno, e.ename, d.deptno
+from emp e, dept d
+where e.deptno(+) = d.deptno;
+
+※ LEFT조인 그냥하면 안나옴!
+select e.empno, e.ename, d.deptno
+from emp e LEFT OUTER JOIN dept d
+ON e.deptno = d.deptno;
+
+
+Q18 사원번호, 사원이름과 상사번호, 상사이름을 모두 출력하는 쿼리를 작성하시오.
+(단, 사장님도 포함하여 출력할 수 있도록 작성하시오.)
+select e.empno 사원번호, e.ename 사원이름, e2.mgr 상사번호, e2.ename 상사
+from emp e, emp e2
+where e.mgr = e2.empno; -> KING 정보가 안뜸!
+
+RIGHT)
+select e.empno, e.ename, e2.mgr, e2.ename
+from emp e, emp e2
+where e.mgr = e2.empno(+);
+
+LEFT)
+select e.empno, e.ename, e2.mgr, e2.ename
+from emp e LEFT OUTER JOIN emp e2
+ON e.mgr = e2.empno;
+
+FULL) -> 상사가 되지못한 애들 + KING
+select e.empno, e.ename, e2.mgr, e2.ename
+from emp e FULL OUTER JOIN emp e2
+ON e.mgr = e2.empno;

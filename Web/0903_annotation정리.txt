@@ -1,0 +1,64 @@
+<스프링컨테이너에서 관리될 객체에서 사용되는 어노테이션들>
+
+*클래스선언
+@Component의 하위클래스 3가지
+@Controller              @Service	   @Repository
+
+*프로퍼티
+@Autowired
+
+*메서드
+@RequestMapping     @GetMapping     @PostMapping
+
+*메서드 파라메터
+@ModelAttribute	     @RequestParam
+
+ex)
+public ModelAndView join(	@ModelAttribute("c") Customer c, 
+			String buildingno, 
+			@RequestParam(required = false, defaultValue = "0") int age, 
+			@RequestParam("addr2") String addr	) {   }
+
+1)
+@ModelAttribute("c") Customer c 는
+ModelAndView mnv = new ModelAndView();
+mnv.addObject("c", c); 와 같다.
+
+2) 선택전달 매개변수를 설정할때
+@RequestParam(required = false, defaultValue = "0") int age
+required 속성과 defaultValue 속성을 같이 설정해줘야한다!
+
+---------------------------------------------------------------------------------------
+<스프링컨테이너 설정용 자바클래스파일에서 사용되는 어노테이션들>
+@Configuration          @Bean
+
+---------------------------------------------------------------------------------------
+1. 스프링컨테이너용 XML파일 = beans.xml 혹은 mvc1-servlet.xml
+2. 스프링컨테이너용 클래스파일 = .java파일
+3. 컨트롤러용 메서드 = a, b
+@GetMapping("/a")
+public String a(){        ==>        a()		/first.jsp
+  return "/first.jsp";
+}
+
+@GetMapping("/other1")
+public String b(){        ==>        b()		/second.jsp
+  return "/second.jsp";
+}
+
+---------------------------------------------------------------------------------------
+<컨트롤러 구현시> http:~~~~~~/hello
+
+@GetMapping("/hello")
+public String hello( Model model, @RequestParam(required=false) String name ){
+   model.addAttribute("result", "hello"); //request.setAttribute("result", "hello")
+   return "/helloResult.jsp";
+}
+
+
+public ModelAndView hello( ){
+   ModelAndView mnv = new ModelAndView( );
+   mnv.addObject("result", "hello");	//request.setAttribute("result", "hello");
+   mnv.setViewName("/helloResult.jsp");
+   return mnv;
+}

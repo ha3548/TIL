@@ -1,0 +1,115 @@
+//var Obj = document.querySelector("h1");
+//Obj.remove();
+
+$ -> 선택자, JQuery용 객체로 만드는 기본문법!
+$("h1").remove()
+$(document)
+$.ajax();
+
+★
+.value X
+.val( ) O
+
+★
+Obj.style.display = "block" X
+$Obj.css("display","block") O
+
+※ Script영역에서
+window.addEventListener("load",function(){ });
+jQuery(document).ready(function(){ });
+$(document).ready(function(){ });
+$(function(){ });
+
+★ jQuery 문법 ★
+1)
+this. -> 현재 객체
+this.style.backgroundColor='yellow';
+
+$(this) -> jQuery용 객체
+$(this).css("background-color", "yellow"); -> jQuery용 라이브러리 메소드
+
+2)
+//DOM트리에서 p객체찾기
+var pObj = document.querySelector("p");
+
+//DOM트리에서 모든 p객체찾기
+var pArr = document.querySelectorAll("p");
+for(var i=0; i<pArr.length; i++) {
+  (function(j){
+    var pObj = pArr[j];
+    pObj.addEventListener("click", function(){});
+  })(i);
+}
+
+//jQuery객체 문법, 배열형태
+var $pArr = $("p");
+$pArr.click(function(){});
+
+3)
+var testObj = document.querySelector("#test");
+var $testObj = $("#test"); //querySelector()호출과 같음
+
+4)
+var testObj = document.querySelector("#test");
+testObj.addEventListener("click", function(){
+  var otherObj = document.querySelector("#other");
+  otherObj.click(); //클릭이벤트 강제발생시킴 -> JavaScript
+});
+
+$("#test").click(function(){}); //클릭이벤트 감시, 이벤트발생시 할일 정의 -> jQuery
+
+5)
+$("ul li:first")	Selects the first <li> element of the first <ul>	
+$("ul li:first-child")	Selects the first <li> element of every <ul>
+
+6)
+var Obj = $("#p1").css("color","red");  //obj는 id속성이 p1인 객체
+var Obj1 = Obj.slideUp(2000);  //obj1는 id속성이 p1인 객체
+Obj1.slideDown(2000);
+
+*메소드 Chaining
+$("#p1").css("color", "red").slideUp(2000).slideDown(2000); -> 한번에쓰기 가능
+
+7)
+parent() -> 직계 부모
+parents() -> 조상(모든 부모들)
+
+children() -> 직계 자식
+find() -> 후손(모든 자식들)
+
+8) first(), last(), eq(), filter(), not(제외할요소)
+$("div").first().css("background-color", "yellow"); -> 함수 사용
+$("div:first").css("background-color", "yellow"); -> 선택자 사용
+
+9)
+$.ajax( {
+  url: 'a.do',
+  data: {id='id1' & pwd='p1'},
+  method: 'POST', ->요청방식(get-기본값/post)
+  success: function(data, textStatus, jqXHR) {
+  }
+} );
+
+10)
+divObj.innerHTML = inner; //JavaScript문법
+$divObj.html(inner); //jQuery문법
+
+11) 형제노드 찾기
+Obj.nextSibling //JavaScript문법
+$(Obj).next() //jQuery문법
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

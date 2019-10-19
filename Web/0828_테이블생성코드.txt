@@ -1,0 +1,85 @@
+CREATE TABLE CATEGORY(
+    cate_no NUMBER(1) CONSTRAINT category_pk PRIMARY KEY,
+    cate_parent_no NUMBER(1),
+    cate_name VARCHAR2(30) NOT NULL,
+    --자기테이블 참조--
+    CONSTRAINT category_parent_no_fk
+    FOREIGN KEY(cate_parent_no) REFERENCES category(cate_no)
+);
+
+INSERT INTO category VALUES(1, null, '음료');
+INSERT INTO category VALUES(2, null, '상품');
+INSERT INTO category VALUES(3, 1, '에스프레소');
+INSERT INTO category VALUES(4, 1, '콜드브루');
+
+COMMIT;
+
+----------------------------------------------------------------------------------------
+
+CREATE TABLE PRODUCT(
+    prod_no VARCHAR2(5) CONSTRAINT product_pk PRIMARY KEY,
+    prod_cate_no NUMBER(1) NOT NULL,
+    prod_name VARCHAR2(50) NOT NULL,
+    prod_price NUMBER(6) DEFAULT 0 NOT NULL, --가격 default값은 0원--
+    prod_detail VARCHAR2(120),
+    --가격은 0원이상만 입력--
+    CONSTRAINT prod_price_ck CHECK(prod_price >=0),
+    --외래키--
+    CONSTRAINT prod_parent_no_fk
+    FOREIGN KEY(prod_cate_no) REFERENCES category(cate_no)
+);
+
+INSERT INTO product VALUES(10001, 3, '플로랄 스타벅스 더블 샷', 3000, null);
+INSERT INTO product VALUES(10002, 3, '에스프레소 콘 파나	', 3000, '에스프레소 샷에 풍부한 휘핑크림을 얹은 강렬하고 달콤한 음료');
+INSERT INTO product VALUES(10003, 4, '나이트로 쇼콜라', 4000, '초콜릿과 견과류의 풍미, 초콜릿 파우더 토핑, 풀 바디감의 새로운 나이트로 콜드 브루');
+
+COMMIT;
+
+----------------------------------------------------------------------------------------
+
+CREATE TABLE ORDER_INFO(
+    order_no NUMBER CONSTRAINT order_info_pk PRIMARY KEY,
+    order_id VARCHAR2(15) NOT NULL, --회원만 주문한다고 가정--
+    order_time timestamp DEFAULT SYSTIMESTAMP NOT NULL --세밀한 시간값까지 셋팅가능--
+);
+
+--외래키--
+ALTER TABLE ORDER_INFO
+ADD CONSTRAINT order_info_id_fk
+FOREIGN KEY (order_id) REFERENCES customer (id);
+
+--INSERT INTO ORDER_LINE VALUES(1, 'id1', to_timestamp('2019-08-28 10:32:00'));
+--INSERT INTO ORDER_LINE VALUES(2, 'id2', to_timestamp('2019-08-28 10:32:00'));
+--INSERT INTO ORDER_LINE VALUES(3, 'id1', to_timestamp('2019-08-28 11:00:00'));
+
+COMMIT;
+
+----------------------------------------------------------------------------------------
+
+CREATE TABLE ORDER_LINE(
+    order_no NUMBER,
+    order_prod_no VARCHAR2(5) NOT NULL,
+    order_quantity NUMBER(2) CHECK(order_quantity>0) NOT NULL
+);
+
+--제약조건--
+ALTER TABLE ORDER_LINE
+ADD CONSTRAINT order_line_pk PRIMARY KEY(order_no,order_prod_no)    --기본키
+ADD CONSTRAINT order_line_no_fk FOREIGN KEY (order_no) REFERENCES order_info(order_no)
+ADD CONSTRAINT order_line_prod_no_fk FOREIGN KEY (order_prod_no) REFERENCES product(prod_no);
+
+COMMIT;
+
+----------------------------------------------------------------------------------------
+--myBatis에 들어갈 SQL문--
+SELECT info.order_no, info.order_time,
+line.order_prod_no, line.order_quantity,
+p.prod_name, p.prod_price
+FROM order_info info JOIN order_line line ON info.order_no = line.order_no
+JOIN product p ON p.prod_no = line.order_prod_no
+WHERE order_id='id1';
+
+----------------------------------------------------------------------------------------
+--시퀀스생성--
+CREATE SEQUENCE order_seq
+START WITH 1 nocache;

@@ -1,0 +1,26 @@
+JAVA 일반어플리케이션
+- main()필요
+
+Servlet = Server + booklet
+- main()필요없음
+- 서블릿엔진[컨테이너]가 실행시켜준다
+
+웹컨텍스트구조
+- 웹컨텍스트루트(/servlet11)
+   :
+  WEB-INF
+     :
+    web.xml [FirstServlet.class에 해당 url-pattern 매핑]  ex)first
+    http://localhost:8080/servlet11/WEB-INF/classes/FirstServlet -> http://localhost:8080/servlet11/first
+     -> 철자가 틀리면 다른것에도 영향을 미칠 수 있어 유지보수가 어려움,
+         -> @: 컴파일이나 실행단계에 영향을 미치는 주석을 사용 *어노테이션 Ex) @WebServlet("/first")
+    classes
+       :
+      FirstServlet.class
+
+*어노테이션
+class P{ void m( ) { } }
+@override
+class C extends P {
+   void n( ) { } -> 오타발견! but, 어노테이션을 써줘서 문제없음
+}

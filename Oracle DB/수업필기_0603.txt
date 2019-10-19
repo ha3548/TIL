@@ -1,0 +1,287 @@
+Q11 20번 부서의 최대급여보다 최대급여가 큰 부서의 번호와 최대급여를 검색하라
+-20부서 최대급여
+select max(sal) from emp
+group by deptno
+having deptno=20;
+
+A)
+select deptno, max(sal)
+from emp
+group by deptno
+having max(sal)>
+(select max(sal) from emp
+group by deptno
+having deptno=20);
+
+Q12 급여가 모든부서들의 평균급여보다 많은 사원정보를 검색하라(ALL)
+-10번 2917 / 20번 2175 / 30번 1567 -> 2917보다 큰 값을 검색!
+select deptno, round(avg(sal))
+from emp
+group by deptno;
+
+select * from emp
+where sal>=
+ALL(select round(avg(sal)) from emp
+group by deptno)
+order by sal;
+
+<SET 함수>
+종류
+-UNION: 중복제거
+-UNION ALL: 중복포함
+-INTERSECT: 중복값
+-MINUS: 첫번째 결과값에서 두번째 결과값을 뺀값
+
+Q 기계과, 전지전자과 학생들?
+A1)
+select * from student
+where stu_dept IN('기계','전기전자');
+
+A2) UNION
+select * from student
+where stu_dept = '기계'
+UNION
+select * from student
+where stu_dept = '전기전자';
+
+Q 컴퓨터정보과 or 2학년 학생?(중복허용)
+select * from student
+where stu_dept = '컴퓨터정보'
+UNION ALL
+select * from student
+where stu_grade = 2;
+
+Q 컴퓨터정보과 and 2학년 학생?
+select * from student
+where stu_dept = '컴퓨터정보'
+INTERSECT
+select * from student
+where stu_grade = 2;
+
+Q 컴퓨터정보과 학생들 중 2학년이 아닌 학생들?
+select * from student
+where stu_dept = '컴퓨터정보'
+MINUS
+select * from student
+where stu_grade = 2;
+
+※ 위, 아래 구문의 싱크가 맞아야한다!
+
+-UNION
+-서브쿼리
+
+Q1 SALES부서와 RESEARCH부서에 근무중인 사원정보를 모두 출력하시오.
+select *
+from emp NATURAL JOIN dept
+where dname='SALES' or dname='RESEARCH';
+
+select *
+from emp NATURAL JOIN dept
+where dname='SALES'
+UNION
+select *
+from emp NATURAL JOIN dept
+where dname='RESEARCH';
+
+Q2 SALESMAN이지만, 보너스를 받지않는 사원의 정보를 출력하시오.
+select * from emp
+where job='SALESMAN' and COMM IS NOT NULL;
+
+select * from emp
+where job='SALESMAN'
+MINUS
+select * from emp
+where COMM IS NULL;
+
+select * from emp
+where job='SALESMAN'
+INTERSECT
+select * from emp
+where COMM IS NOT NULL;
+
+※ 개발자는 DML(SELECT INSERT UPDATE DELDTE) 주로 사용
+   DDL은 사용하지 않는다 -> 테이블을 변경·삭제하는 것은 매우 위험!
+
+<DML>★문법★
+-SELECT [칼럼명] FROM [테이블] WHERE ~
+-UPDATE [테이블] SET [칼럼명]=값 WHERE ~
+-INSERT INTO [테이블](칼럼1, 칼럼2, ···)  VALUES( 값1, 값2, ··· )
+-DELETE FROM [테이블] WHERE ~
+
+※ INSERT, UPDATE, DELETE 수행 후 COMMIT을 해야 DB에 반영됨
+Ex) emp_test 테이블 생성
+SELECT * from emp_test;
+INSERT INTO emp_test VALUES(7369,'SMITH','CLERK',7902,TO_DATE(80/12/17),800,null,20);
+INSERT INTO emp_test(empno, ename) VALUES(2014,'BONG');
+UPDATE emp_test SET empno=1434 where ename='BONG'
+DELETE FROM emp_test where ename='BONG'
+
+Q1 emp_test 테이블에 emp 테이블의 모든 사원정보를 입력하시오. (단, SMITH는 제외)
+INSERT INTO emp_test
+select * from emp
+where ename<>'SMITH';
+
+※ 동명이인이 존재한다면? -> Primary 키(사원번호)를 사용하는게 안전하다!
+INSERT INTO emp_test
+select * from emp
+where empno<>7369;
+
+Q2 emp_test 테이블에 아래 정보를 입력하시오.
+월급: 10,000 / 보너스: 1000 / 이름: SON / 사원번호: 1112
+INSERT INTO emp_test(sal, comm, ename, empno)
+VALUES(10000.00, 1000, 'SON', 1112);
+
+※ 칼럼명을 넣지 않았을때는 순서대로 넣는것
+   칼럼명을 넣을때는 1:1 대응으로 넣는것
+   -> 이 방법을 익히자! 칼럼순서가 바뀔수도 있기 때문
+
+Q3 사원번호가 7900번인 사원의 부서번호를 30으로 수정
+UPDATE emp_test SET deptno=30 where empno=7900;
+
+Q4 부서번호 20의 사원들 급여가 10% 인상됨
+UPDATE emp_test SET sal=sal*1.1 where deptno=20;
+
+Q5 모든사원의 입사일을 오늘로 수정
+UPDATE emp_test SET hiredate=sysdate;
+
+※ sysdate: 오늘날짜
+
+Ex) emp_test에 사원번호 9999, 사원이름 KITRI를 입력하고,
+사원번호가 9999인 사원의 이름을 KITRI00으로 변경하시오.
+INSERT INTO emp_test(empno, ename) VALUES(9999,'KITRI');
+UPDATE emp_test SET ename='KITRI00' where empno=9999;
+
+Ex)
+subject_test 테이블을 새로 만드시오
+subject_test 테이블에 subject 테이블 정보를 모두 저장
+subject_test 테이블에 아래 정보를 입력하시오.
+(112, 오라클DB, 여동빈, 1, 컴퓨터정보)
+
+create table subject_test(
+sub_no char(3),
+sub_name varchar2(30),
+sub_prof varchar2(12),
+sub_grade number(1),
+sub_dept varchar2(20),
+constraint test_sub_no primary key(sub_no));
+
+INSERT INTO subject_test
+select * from subject;
+
+INSERT INTO subject_test VALUES('112', '오라클DB', '여동빈', 1, '컴퓨터정보');
+commit;
+
+Ex)
+enrol_test 테이블을 새로 만드시오
+enrol_test 테이블에 enrol 테이블 정보를 모두 저장
+enrol_test 테이블에 시스템분석설계를 듣는 학생들의 점수는
+10점씩 증가시키시오.
+
+create table enrol_test(
+sub_no char(3),
+stu_no char(9),
+enr_grade number(3),
+constraint test_course primary key(sub_no,stu_no));
+
+INSERT INTO enrol_test
+select * from enrol;
+
+UPDATE enrol_test SET enr_grade=enr_grade+10
+where sub_no=
+(select sub_no from subject where sub_name='시스템분석설계');
+
+Q6 emp_test 테이블에서 월급 등급이 3인 직원의 월급을 15% 인상하여 저장하시오.
+-3등급인 직원
+select e.sal, s.grade from emp e, salgrade s
+where e.sal between s.losal and s.hisal
+and s.grade=3;
+
+select empno from emp
+where empno IN (select e.empno from emp e, salgrade s
+where e.sal between s.losal and s.hisal
+and s.grade=3);
+
+A1) 기본키(사원번호)로 비교
+UPDATE emp_test SET sal=sal*1.15
+where empno IN
+(select e.empno from salgrade s, emp e
+where e.sal between s.losal and s.hisal
+and s.grade=3);
+
+A2)
+UPDATE emp_test SET sal=sal*1.15
+where sal between
+(select losal from salgrade where grade=3)
+and
+(select hisal from salgrade where grade=3);
+
+Q7 emp_test 테이블에서 DALLAS에서 일하는 직원들의 COMM을 100씩 추가하시오.
+UPDATE emp_test SET comm=NVL(comm,0)+100
+where deptno = (select deptno from dept where loc='DALLAS');
+
+Q8 emp_test 테이블에서 SCOTT의 상급자를 BLAKE로 변경하시오.
+UPDATE emp_test SET mgr=(select empno from emp where ename='BLAKE')
+where empno=(select empno from emp where ename='SCOTT');
+
+Q9 사원번호가 7902번인 사원의 데이터를 삭제
+DELETE FROM emp_test
+where empno='7902';
+
+Q10 평균급여보다 적게받는 사원 삭제
+DELETE FROM emp_test
+where sal<
+(select round(avg(sal)) from emp);
+
+Q11 모든행을 삭제
+DELETE FROM emp_test;
+
+<MERGE문>
+Q12 emp_test에 다음 정보를 입력하시오.
+사원번호 1112(기본키!!) / 이름 PARK / 월급 1000
+만약 데이터가 존재하면 UPDATE, 그렇지 않으면 INSERT 하시오.
+※ Dummy 테이블 사용 -> daul
+
+MERGE INTO emp_test e
+USING dual t
+ON(e.empno=1112)
+
+WHEN MATCHED THEN
+UPDATE SET e.ename='PARK', e.sal=1000
+
+WHEN NOT MATCHED THEN
+INSERT(e.empno, e.ename, e.sal) VALUES('1112','PARK',1000);
+
+
+Q13 컴퓨터정보 1,2학년 학생이면 몸무게를 10KG씩 증가시키고
+컴퓨터정보 3학년 학생이면 몸무게를 20KG씩 증가시켜
+새로운 student_test 테이블에 데이터를 저장하시오.
+
+A1)
+create table student_test(
+stu_no char(9),
+stu_name varchar2(12),
+stu_dept varchar2(20),
+stu_grade number(1),
+stu_class char(1),
+stu_gender char(1),
+stu_height number(5,2),
+stu_weight number(5,2),
+constraint test_stu_no primary key(stu_no));
+
+UPDATE student_test SET stu_weight=stu_weight+10
+where stu_grade IN(1,2);
+
+UPDATE student_test SET stu_weight=stu_weight+20
+where stu_grade=3;
+
+A2) ★★★
+MERGE INTO student_test t1
+USING (select * from student where stu_dept='컴퓨터정보') t2
+ON(t1.stu_no=t2.stu_no)
+
+WHEN MATCHED THEN
+UPDATE SET t1.stu_weight = t2.stu_weight + DECODE(stu_grade,1,10,2,10,3,20)
+
+WHEN NOT MATCHED THEN
+INSERT(t1.stu_no, t1.stu_name, t1.stu_dept, t1.stu_grade, t1.stu_class, t1.stu_gender, t1.stu_height, t1.stu_weight)
+VALUES(t2.stu_no, t2.stu_name, t2.stu_dept, t2.stu_grade, t2.stu_class, t2.stu_gender, t2.stu_height, t2.stu_weight + DECODE(t2.stu_grade,1,10,2,10,3,20));

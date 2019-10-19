@@ -1,0 +1,228 @@
+13.
+select stu_no, stu_name, sub_name
+from enrol NATURAL JOIN student
+NATURAL JOIN subject
+where sub_name IN('시스템분석설계','소프트웨어공학')
+order by stu_no;
+
+14.
+select distinct stu_no, stu_name
+from enrol NATURAL JOIN student
+NATURAL JOIN subject
+where sub_grade='1' or sub_dept='컴퓨터정보';
+
+15.
+-NATURAL
+select stu_no, stu_name, sub_name
+from enrol NATURAL JOIN student
+NATURAL JOIN subject
+where sub_name IN('기계공작법','기초전자실험')
+order by stu_no;
+
+-USING
+select stu_no, stu_name, sub_name
+from enrol JOIN student USING(stu_no)
+JOIN subject USING(sub_no)
+where sub_name IN('기계공작법','기초전자실험')
+order by stu_no;
+
+16.
+-NATURAL
+select stu_no
+from enrol NATURAL JOIN student
+NATURAL JOIN subject
+where sub_prof IN('김태영','김유석');
+
+-USING
+select stu_no
+from enrol JOIN student USING(stu_no)
+JOIN subject USING(sub_no)
+where sub_prof IN('김태영','김유석');
+
+17.
+select stu_name, sub_name, enr_grade
+from enrol NATURAL JOIN student
+NATURAL JOIN subject;
+
+18.
+select sub_name
+from enrol NATURAL JOIN student
+NATURAL JOIN subject
+where stu_name='옥한빛';
+
+19.
+select distinct sub_name
+from enrol NATURAL JOIN student
+NATURAL JOIN subject
+where stu_gender='F';
+
+20.
+select distinct sub_name
+from enrol NATURAL JOIN student
+NATURAL JOIN subject
+where stu_weight>=60;
+
+21.
+select stu_no, stu_name, sub_name
+from enrol NATURAL JOIN student
+NATURAL JOIN subject
+where sub_dept='컴퓨터정보';
+
+22.
+select distinct count(stu_no)
+from enrol NATURAL JOIN student
+where enr_grade>=70;
+
+23.
+select stu_name
+from enrol NATURAL JOIN student
+NATURAL JOIN subject
+where stu_gender='F' and sub_prof='구봉규';
+
+24.
+-김종헌 평균 68점
+select stu_no, stu_name, avg(enr_grade)
+from enrol NATURAL JOIN student
+group by stu_no, stu_name
+having avg(enr_grade)>
+(select avg(enr_grade)
+from student NATURAL JOIN enrol
+where stu_name='김종헌'
+group by stu_name);
+
+25.
+select stu_no, stu_name, avg(enr_grade)
+from enrol NATURAL JOIN student
+group by stu_no, stu_name;
+
+-김인중 평균 81점
+select stu_no, stu_name, avg(enr_grade)
+from enrol NATURAL JOIN student
+group by stu_no, stu_name
+having avg(enr_grade)<
+(select avg(enr_grade)
+from student NATURAL JOIN enrol
+where stu_name='김인중'
+group by stu_name);
+
+26.
+-전체평균 64
+select round(avg(enr_grade)) from enrol;
+-과목별
+select stu_no, stu_name, sub_name, enr_grade
+from enrol NATURAL JOIN student
+NATURAL JOIN subject
+where enr_grade>=
+(select round(avg(enr_grade)) from enrol);
+
+-전체평균
+select stu_no, stu_name, avg(enr_grade)
+from enrol NATURAL JOIN student
+NATURAL JOIN subject
+group by stu_no, stu_name
+having avg(enr_grade)>=
+(select round(avg(enr_grade)) from enrol)
+order by 3;
+
+27.
+-학과별 평균 전기전자59/기계60/컴퓨터정보69
+select stu_dept, round(avg(enr_grade))
+from enrol NATURAL JOIN student
+group by stu_dept;
++
+select stu_no, stu_dept, round(avg(enr_grade))
+from enrol NATURAL JOIN student
+where enr_grade IS NOT NULL
+group by stu_dept, stu_no;
+
+★Answer★
+select t1.stu_no
+from (select stu_no, stu_dept, round(avg(enr_grade)) a_g
+      from enrol NATURAL JOIN student
+      where enr_grade IS NOT NULL
+      group by stu_dept, stu_no) t1
+JOIN (select stu_dept, round(avg(enr_grade)) b_g
+      from enrol NATURAL JOIN student
+      group by stu_dept) t2
+USING(stu_dept)
+where t1.a_g >= t2.b_g;
+
+
+28.
+-학과별 최고점수 전기전자72/기계78/컴퓨터정보81
+select stu_dept, max(enr_grade)
+from enrol NATURAL JOIN student
+NATURAL JOIN subject
+group by stu_dept
+having max(enr_grade)>(select max(enr_grade)
+from enrol NATURAL JOIN student
+NATURAL JOIN subject
+where stu_dept='기계');
+
+29.
+select stu_no, stu_name, stu_dept, round(avg(enr_grade))
+from enrol NATURAL JOIN student
+NATURAL JOIN subject
+group by stu_no, stu_name, stu_dept
+having stu_dept='컴퓨터정보'
+order by 4;
+
+30.
+select stu_no, stu_name, enr_grade
+from enrol NATURAL JOIN student
+NATURAL JOIN subject
+where sub_name='시스템분석설계'
+order by 3;
+
+31.
+select stu_no, stu_name, count(sub_no)
+from enrol NATURAL JOIN student
+NATURAL JOIN subject
+group by stu_no, stu_name
+order by 3;
+
+-정렬
+select stu_no, stu_name, count(sub_no)
+from enrol NATURAL JOIN student
+NATURAL JOIN subject
+group by stu_no, stu_name
+having count(sub_no)>=2
+order by 3;
+
+32.
+select stu_no, stu_name, count(sub_no)
+from enrol NATURAL JOIN student
+group by stu_dept, stu_no, stu_name
+having count(sub_no)=1
+order by stu_dept, stu_no;
+
+33.
+-김종헌68/옥성우65/김인중81
+select stu_no, stu_name, stu_dept, round(avg(enr_grade)) avg_g
+from enrol NATURAL JOIN student
+group by stu_no, stu_name, stu_dept
+having stu_dept='컴퓨터정보';
++
+select stu_no, stu_name, stu_dept, round(avg(enr_grade))
+from enrol NATURAL JOIN student
+group by stu_no, stu_name, stu_dept
+having stu_dept='컴퓨터정보'
+and round(avg(enr_grade))=81;
+
+★Answer★
+select stu_no, stu_name, stu_dept, round(avg(enr_grade))
+from enrol NATURAL JOIN student
+group by stu_no, stu_name, stu_dept
+having stu_dept='컴퓨터정보'
+and round(avg(enr_grade))>=
+(select max(round(avg(enr_grade)))
+from enrol NATURAL JOIN student
+group by stu_dept
+having stu_dept='컴퓨터정보');
+
+34.
+select distinct stu_no, stu_name
+from enrol NATURAL JOIN student
+NATURAL JOIN subject
+where sub_name IN('컴퓨터개론','시스템분석설계')
+order by stu_no;

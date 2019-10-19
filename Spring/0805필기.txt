@@ -1,0 +1,76 @@
+<JSP 기본객체의 Attr>
+pageContext : PageContext		${pageScope.attrName}
+				<%=pageContext.getAttribute("attrName")%>
+
+request : HttpServletRequest	${requestScope.attrName}
+				<%=request.getAttribute("attrName")%>
+
+session : HttpSession		${sessionScope.attrName}
+				<%=session.getAttribute("attrName")%>
+
+application : ServletContext		${applicationScope.attrName}
+				<%=application.getAttribute("attrName")%>
+${attrName}
+   <%=pageContext.getAttribute("attrName")%>
+   <%=request.getAttribute("attrName")%>
+   <%=session.getAttribute("attrName")%>
+   <%=application.getAttribute("attrName")%>
+   그래도 없으면 " " 빈문자열 출력
+   ※ lifeCycle이 짧은-긴 순서
+
+<%-- 변수선언 --%>
+<c:set var="a" value="hello" />
+--> <%pageContext.setAttribute("a","hello"); %>
+
+<c:set var="b" value="b1" scope="request" />
+--> <%pageContext.setAttribute("b","b1",PageContext.REQUEST_SCOPE); %>
+     <%request.setAttribute("b","b1"); %>
+
+<c:remove var="b" scope="request" />
+--> <%pageContext.removeAttribute("b",PageContexet.REQUEST_SCOPE); %>
+     <%request.removeAttribute("b"); %>
+
+-------------------------------------------------------------------------------------
+
+     서블릿
+request.setAttribute("intArray",{1,2,3,4,5,6});
+	:
+     JSP로 이동
+	:
+<c:forEach var="i" begin="2" end="4" items="${intArray}" varStatus="s">
+${s.index} - ${s.count} : ${ i }
+</c:forEach> <%-- 2-1:30
+		3-2:40
+		4-3:50 --%>
+-------------------------------------------------------------------------------------
+<토큰>: 의미를 담고있는 문자열
+아버지가 : 방에 : 들어 : 가신다 -> 구분자4개 토큰4개
+아버지가 : : 방에 : 들어 : 가신다 -> 구분자5개 토큰4개
+
+String s = "아버지가 : : 방에 : 들어 : 가신다";
+
+StringTokenizer st = new StringTokenizer(s, ":");  ※빈문자열은 분리하지 못한다 -> 이럴땐 split사용!
+while(st.hasMoreTokens( )) {
+  String t = st.nextToken();
+  sop(t);	//아버지가
+}	//방에
+	//들어
+	//가신다
+
+String arr[] = s.split(5, ":");
+for(String a : arr){
+   sop("**" + a + "**";	//**아버지가** **** **방에** **들어** **가신다**
+}
+
+<SQL>
+select board_time from board; --날짜
+select to_char(board_time, 'yy-mm-dd hh:mi:ss') from board; --날짜 시분초
+
+<JAVA>
+java.util.Date board_time = rs.getDate("board_time");
+<%=board_time%> 또는 ${board_time} //날짜
+
+<%String pattern = "yy-MM-dd hh:mm:ss";
+SimpleDateFormat sdf = new SimpleDateFormat(pattern); %>
+<%=sdf.format(board_time)%> //날짜 시분초
+

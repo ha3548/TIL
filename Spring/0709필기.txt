@@ -1,0 +1,109 @@
+<요소의 종류>
+1) Block
+   : 영역·크기조절O, 자동줄바꿈O
+   ex) h1~h6 p ul ol li dl dt dd / table tr / div
+
+* margin-top: 10px; margin-right: 20px; margin-bottom: 30px; margin-left: 40px
+한번에 설정하면(시계방향 순서, 한칸씩 띄움) -> margin: 10px 20px 30px 40px;
+
+* <div style="display: none;"> -> 화면에 나타나지 않는다
+
+2) Inline
+   : 영역·크기조절X(자동설정), 자동줄바꿈X, 좌우margin 반영O, 상하X
+   ex) button span
+
+*margin 직접설정해도 반영되지 않는다, 크기가 자동설정 되기 때문!!
+* button은
+  form 내부에서 submit버튼과 같은역할
+  form 외부에서 일반버튼역할
+
+3) Inline-Block
+   : 영역·크기 조절가능, 자동줄바꿈X
+   ex) img input select textarea
+
+* <input type="hidden">는 서버에 정보는 전송하지만 화면에 표시하고 싶지는 않을 때 사용,
+  <div style="display: none;">과 비슷
+* 라디오버튼은 name속성 값을 같게해야 하나만 선택가능
+* ★서버에 전송★하고 싶으면 무조건 ★name 속성★을 설정해야한다
+
+<HTML5에 추가된 input type 속성들>
+모바일에서 사용하기 편리하도록 추가된 것들이다.
+search: x를 누르면 내용지워짐
+number: 숫자만 있는 키패드
+email: @ .com 이 있는 문자키패드
+date: 달력에서 날짜선택
+range: 숫자 직접입력, 화살표안뜸
+tel: * # 가 있는 숫자키패드
+
+<HTML5에 추가된 input 속성들>
+readonly: 읽기전용
+autocomplete: 자동완성
+autofocus: 페이지 로드되면 커서가 있는 곳
+placeholder: 회색글씨가 설정되어있고 값 입력하면 회색글씨 사라짐(힌트같은거)
+	   *required속성: 필수입력항목, 알아서 유효성검사해줌
+
+★ class 속성 .
+ex) class가 cities인 요소들 스타일 설정
+<style>
+.cities {
+  background-color: black;
+  color: white;
+  margin: 20px;
+  padding: 20px;
+}
+</style>
+
+★ id 속성 #
+ex) id가 myHeader인 요소들 스타일 설정
+<style>
+#myHeader {
+  background-color: lightblue;
+  color: black;
+  padding: 40px;
+  text-align: center;
+}
+</style>
+
+※ 차이점
+1) HTML
+: 웹문서를 제작하는 기본뼈대(내용)
+2) CSS
+: 뼈대에 디자인을 입힌다(모양) ex) 글자의 크기·모양·줄간격 등
+-inline: <태그이름 styles="~~~">
+-internal: <style> 선택자(프로퍼티명:값; ...} </style>
+-external: 
+3) JavaScript
+: 뼈대와 디자인에 움직임을 넣는다(액션)
+
+<File Paths>
+<img src="picture.jpg"> 같은폴더 안에있는 jpg
+<img src="images/picture.jpg"> 하위폴더(이름:images) 안에있는 jpg
+<img src="/images/picture.jpg">★★★ html과 다른 디렉토리(이름:images) 안에있는 jpg
+<img src="../picture.jpg"> 현재의 상위경로에 있는 jpg
+
+※ 한글이 깨진다?
+이유1. 웹의 인코딩유형 UTF-8이 아니라서
+이유2. <meta charset="UTF-8">설정이 안되어있어서
+
+<Layouts>
+* 형식
+  <header>HEADER</header>
+  <section>SECTION</section>
+  <footer>FOOTER</footer>
+
+* 시맨틱태그
+  : 의미만 담고있는 태그, 효과나 기능을 입히려면 CSS나 JavaScript의 도움을 받아야함
+  ex) <div>HEADER</div>
+      <div>SECTION</div>
+      <div>FOOTER</div>
+
+-> 레이아웃의 footer는 맨위로 올려도 위치가 바뀌지 않는데(맨밑에 출력),
+    시멘틱태그는 footer가 맨위에 출력될것이다.
+
+* 신문에 비유하면 section은 경제면 사회면 ···이고, article은 기사
+따라서 section 내부에 article을 넣어준다
+
+* width는 %단위 적용O, height는 %단위 적용X (px 단위만 사용)
+* article에 내용이 넘칠때 overflow 속성
+  - scroll: 넘치는 안넘치든 항상 스크롤 표시
+  - auto: 넘칠때만 스크롤 표시

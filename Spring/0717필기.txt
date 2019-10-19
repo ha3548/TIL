@@ -1,0 +1,66 @@
+ ※ JSON(JavaScript Object Notation): 웹뿐만 아니라 안드로이드앱에서도 사용가능
+- 브라우저: 응답내용 parsing
+- 안드로이드 앱: 응답내용 parsing 못함
+
+* Server측(jsp) 데이터
+[]->배열
+{}->객체
+
+Ex)
+[
+   {"d1":"우편번호", "d2":"주소"},
+   {"d1":"12345", "d2":"주소1"},
+   {"d1":"48678", "d2":"주소2"},
+   {"d1":"53748", "d2":"주소3"},
+   {"d1":"78645", "d2":"주소4"},
+   {"d1":"45783", "d2":"주소5"}
+]
+
+* html
+var jsonObj = JSON.parse(data); //문자열을 자바스크립트 객체형태로 바꿔줌(parsing)
+
+★자바스크립트 이벤트 처리방법
+1. inline 이벤트처리 -> But, 유지보수가 어렵다
+<span onclick = "ctrl.toggle(this);">
+
+2. internal 이벤트처리 (1번과 같은효과, 유지보수가 쉽다)
+<script>
+window.addEventListener("load", function(){
+  var spanObj = document.querySelector("span");
+  spanObj.window.addEventListener("click", function(){
+    ctrl.toggle(this);
+  });
+});
+</script>
+<span>
+
+3. external 이벤트처리
+<a.js>
+window.addEventListener("load", function(){
+  var spanObj = document.querySelector("span");
+  spanObj.window.addEventListener("click", function(){
+    ctrl.toggle(this);
+  });
+});
+----------------------------------------------------------
+<script src="a.js"></script>
+<span>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

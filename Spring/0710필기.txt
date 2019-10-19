@@ -1,0 +1,109 @@
+JAVA
+: 객체지향언어
+JavaScript
+: 인터프리트 언어, 객체기반언어, 웹브라우저 내부에 있는 자바스크립트 해석기에 의해 실행
+* return 타입이 없다
+* 매개변수 자료형 선언 못함, 자료형을 미리 결정하는게 아니라 var라는 예약어로 선언
+* var? 변수(variable), 자바스크립트 예약어 ★★★
+	var 선언하면 -> 동적메모리(scope영역)에 할당 -> 함수가 끝나면 없어짐
+	선언 안 하면 -> window 객체에 선언 -> 밖에서 할당됨
+
+
+<head>, <body> 안에 <script> 작성
+head태그의 안쪽에 두는 것이 유지보수하기 편하다!
+body태그의 안쪽에 두면 유지보수가 어려움(아래로 내려야하니까)
+* listener도 제공됨
+
+- 자료형 : 숫자형(number), 문자열(String), 논리형(boolean), 객체형 {}, 함수형, undefind형
+- 연산자 : 산술연산자, 비교연산자, 논리연산자, 대입연산자
+- 조건문, 반복문
+
+* console.log() : 브라우저의 console에 결과출력
+* typeof() : 자료형 확인
+ex) typeof p == "function" -> 결과는 T/F
+
+※ 주석 처리 
+html : <!-- -->
+css : /* */
+js : // , /* */
+
+--- web browser architecture
+Rendering Engine
+↓
+JavaScript Interpreter
+
+html 내용은 렌더링 엔진이 파싱하면서 트리구조 객체형태로 기억시킴
+*파싱? 어떤 데이터를 다른 모양으로 가공하는 것
+
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title> 부분
+-><script></script> 태그로 감
+-> <script>태그를 head, body 태그중에 어디에 둘 지 관건임
+
+<img src="picture.jpg">   picture.jpg is located in the same folder as the current page
+-> 현재 페이지와 같은 폴더에 있음
+<img src="images/picture.jpg">   picture.jpg is located in the images folder in the current folder
+-> 현재 폴더의 images 폴더에 있음
+<img src="/images/picture.jpg">   picture.jpg is located in the images folder at the root of the current web
+-> 현재 웹의 루트에 있는 images 폴더에 있음
+<img src="../picture.jpg">   picture.jpg is located in the folder one level up from the current folder
+-> 현재 폴더에서 한 수준 위의 폴더에 있음
+
+----------------------------------------------------------------------------------
+DOM(Document Object Model) Tree
+: 웹 페이지에 대한 인터페이스, HTML 요소들의 구조화된 표현
+
+javascript의 window 객체가 load이벤트를 감시한다(DOM트리가 완성된 시점)
+load이벤트가 발생하면 화면에 보여짐
+첫 번째 단계에서 브라우저는 읽어들인 문서를 파싱하여
+최종적으로 어떤 내용을 페이지에 렌더링할지 결정합니다.
+그리고 두 번째 단계에서 브라우저는 해당 렌더링을 수행합니다.
+첫 번째 과정을 거치면 “렌더 트리”가 생성됩니다. -> DOM트리
+
+※ Node의 종류
+: 모든 Node는 이름과 값을 가질 수 있다!
+1) Element Node -> 이름O 값X
+   : html의 태그들 ex) body, input, button 등
+2) Attribute Node -> 이름O 값O
+   : type, name, value 같은 속성들 ex) type=radio; name=r; value=1;
+3) Text Node -> 이름X 값O
+   : 일반텍스트
+
+태그가 열리고 닫히는 사이에 있으면 자식(Children)
+<button>실행</button> -> button과 "실행"은 자식관계
+
+그렇지 않고 태그옆에 있으면 형제(Sibling)
+<input ~~~>가위
+<input ~~~>바위
+<input ~~~>보
+ -> input과 "가위, 바위, 보"는 형제관계
+
+
+------------------------------------------------------------------
+
+<DOM>
+DOM트리 완성될 때 발생하는 이벤트 종류: window객체의 load이벤트
+이벤트 감시 메서드: addEventListener("이벤트이름", function(){});
+window.addEventListener("load", function(){});
+//DOM트리가 구성될때까지 기다린다 = window객체의 load이벤트 감시
+
+DOM트리에서 객체찾기
+var oneObj = document.querySelector("선택자");
+var arrObj = document.querySelectorAll("선택자");
+
+각 객체에서 클릭되었을 때 발생하는 이벤트 종류: click이벤트
+
+<input type = "checkbox"/"radio">
+선택/해제 구분하는 속성: checked (true/false)
+
+
+
+
+
+
+
+
+
+

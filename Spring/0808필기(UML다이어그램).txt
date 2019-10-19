@@ -1,0 +1,9 @@
+- 기획자 / DB관리자 / 사용자
+ -> 개발언어 모름
+- 개발자, 프로젝트매니저
+- 유지보수
+ -> 개발언어를 알고있음
+
+1) Usecase Diagram
+2) Class Diagram
+3) Sequence Diagram

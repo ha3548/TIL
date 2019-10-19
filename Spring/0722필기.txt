@@ -1,0 +1,29 @@
+<테이블 모델링 표기법> ERD
+까마귀발: 1대다 관계
+
+동그라미O 선택참여
+동그라미X 필수참여
+
+
+<우편번호검색 다음할일!>
+JoinServlet 생성
+요청URL: /join
+요청방식: POST
+요청전달데이터:
+ id= & pwd= & name= & buildingno= & addr(상세주소값)
+
+이름칸 생성!!!
+우편번호-건물번호
+<input type="hidden" name="buildingno" value=""> //안보이지만 저장해서넘겨라
+
+status:1 //가입성공 alert -> layout.html로 이동
+status:-1//가입실패
+
+
+*LifeCycle*
+1. 객체생성, 생성자호출
+2. init()자동호출
+3. HttpServletRequest, HttpServletResponse 객체 생성
+4. service()자동호출
+- GET: doGet(  )자동호출
+- POST: doPost(  )자동호출

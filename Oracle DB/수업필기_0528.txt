@@ -1,0 +1,97 @@
+<SQL Plus>
+사용자명: C##ORA_USER
+비밀번호: bong
+
+SQL> show user
+USER은 "SYSTEM"입니다
+
+SQL> create user c##ora_user identified by bong;
+사용자가 생성되었습니다.
+
+SQL> grant dba to c##ora_user;
+권한이 부여되었습니다.
+
+SQL> connect c##ora_user;
+비밀번호 입력:
+연결되었습니다.
+
+SQL> show user;
+USER은 "C##ORA_USER"입니다
+
+※ c## 삭제 설정
+alter session set "_ORACLE_SCRIPT"=true;
+
+SQL> CREATE TABLE 테이블명(
+        );
+테이블이 생성되었습니다.
+
+SQL> desc 테이블명;
+테이블 보여줌
+
+SQL> select * from tab;
+생성된 테이블명 보여줌
+
+※ 코드지우기
+clear scr
+
+<SELECT문>
+SQL> select empno, ename from emp;
+SQL> select empno as 사원번호, ename as 사원이름 from emp;
+
+Q1 부서번호가 10번인 사원들의 사원번호, 사원이름, 월급을 출력하시오.
+select empno as 사원번호, ename as 사원이름, sal as 월급 from emp 
+where deptno=10;
+
+Q2 사원번호가 7369인 사원의 이름, 입사일, 부서번호를 출력하시오.
+select ename as 이름, hiredate as 입사일, deptno as 부서번호 from emp 
+where empno=7369;
+
+Q3 사원번호가 7300보다 크고 7400보다 작은 사원이름, 입사일, 부서번호를 출력하시오.
+select ename as 이름, hiredate as 입사일, deptno as 부서번호 from emp
+where empno>=7300 and empno <=7400;
+
+Q4 사원이름이 SMITH인 사원이름, 입사일 부서번호를 출력하시오.
+select ename as 이름, hiredate as 입사일, deptno as 부서번호 from emp
+where ename='SMITH';
+
+Q5 사원이름이 ADAMS 이고 사원번호가 7800 보다 작은 사원의 모든 정보를 출력하시오.
+select * from emp
+where ename='ADAMS' and empno<7800;
+
+Q6 EMPNO 모든 정보를 오름차순/내림차순으로 검색하시오.
+select empno from emp
+order by empno asc/desc;
+
+Q7 사장을 제외하고 모두 검색하시오.
+select * from emp where mgr is NULL; -> 사장만 검색
+select * from emp where mgr is not NULL; -> 사장 제외 검색
+
+Q8 이름이 S로 시작하는 모든 사원의 사원번호와 이름을 출력하시오.
+select empno, ename from emp
+where ename like 'S%';
+
+Q9 이름 중 S가 들어있는 사원의 사원번호와 이름을 출력하시오.
+select empno, ename from emp
+where ename like '%S%';
+
+※ 두 테이블의 변수 검색
+select e.empno, d.deptno from emp e, dept d;
+-> emp 테이블에서 empno 변수검색 & dept 테이블에서 deptno 변수검색
+-> as 생략가능
+
+Q10 부서가 RESEARCH인 사원의 이름, 사원번호를 출력하시오.
+select emp.ename, emp.empno from emp, dept
+where emp.deptno=20;
++
+select deptno from dept
+where dname='RESEARCH';
+=
+select ename, empno from emp
+where deptno=(select deptno from dept
+	        where dname='RESEARCH');
+
+Q11 부서가 시카고에 있는 사원의 사원번호, 이름을 출력하시오.
+select empno, ename from emp
+where deptno=(select deptno from dept
+	        where loc='CHICAGO');
+

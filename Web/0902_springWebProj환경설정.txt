@@ -1,0 +1,132 @@
+Spring 웹프로젝트 환경설정
+1) 이클립스 Marketplace에서 spring tool suite 플러그인 설치
+2) 이클립스 DynamicWebProject생성 ex)spring-mvc1
+3) 필요한 라이브러리 -> 라이브러리를 maven으로 관리하기 위해 maven프로젝트로 변경
+    spring-mvc 5.0.2 : 웹관련
+    spring-jdbc 5.0.2 : 자바연동
+    mybatis 3.5.2
+    mybatis-spring 1.3.2 : 마이바티스 연동
+    jstl 1.2
+    simple-json 1.1.1
+4) 웹프로젝트에서 사용될 객체들을 스프링컨테이너가 관리
+<-> 일반프로젝트에서는
+String path = "beans2.xml";
+ApplicationContext ctx = new ClassPathXmlApplicationContext(path);
+-----------------------------------------------------------------------------
+웹프로젝트에서는 web.xml파일에
+<servlet>
+  <servlet-name>mvc1</servlet-name>
+  <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+</servlet>
+<servlet-mapping>
+  <servlet-name>mvc1</servlet-name>
+  <url-pattern>/</url-pattern>
+</servlet-mapping>
+
+xml파일이름은 mvc1-servlet.xml
+톰캣구동시 스프링컨테이너가 자동구동된다
+
+5) mvc1-servlet.xml
+<context:component-scan base-package="control"/>
+<context:annotation-config/>
+<mvc:annotation-driven/>
+
+일반웹프로젝트
+control.DispatcherServlet에서 dispatcher.properties파일과 매핑
+
+스프링웹프로젝트
+servlet.DispatcherServlet에서 mvc1-servlet.xml파일과 매핑
+
+<!-- control패키지에서 @Component계열 어노테이션이 설정된 클래스타입의 객체생성 -->
+<context:component-scan base-package="control"/>
+
+<!-- 생성된 객체중 @Controller 어노테이션 객체찾기,
+      @RequestMapping 어노테이션 메서드찾아 실행 -->
+<mvc:annotation-driven/>
+
+@Controller
+public class LoginController {
+   @RequestMapping("/a")
+   public void a() { }
+}
+
+<view결정방법>
+아래와 같이 controller용 메서드이름을 viewer이름으로 활용하려면
+@GetMapping("/a")	Controller	Viewer
+public void a(){ } ==>     LoginController.a()	/a.jsp
+
+@GetMapping("/other1")
+public void b(){ } ==>    LoginController.b()	/b.jsp
+
+@GetMapping("/other2")
+public void c(){ } ==>     LoginController.c()	/c.jsp
+
+mvc1-servlet.xml 파일에
+<mvc:view-resolvers>
+  <mvc:jsp prefix="/" suffix=".jsp">
+</mvc:view-resolvers>로 등록한다.
+-----------------------------------------------------------------------------
+controller용 메서드이름을 viewer이름으로 활용하지 않으면
+view-resolvers를 등록하지 않는다.
+@GetMapping("/a")
+public String a(){        ==>        a()		/first.jsp
+  return "/first.jsp";
+}
+
+@GetMapping("/other1")
+public String b(){        ==>        b()		/second.jsp
+  return "/second.jsp";
+}
+
+@GetMapping("/other2")
+public String c(){
+  return "/first.jsp"; ==> first로 반환하고싶을때
+}
+
+6)servlet12프로젝트를 스프링프로젝트로 변경하기
+spring-mvc1
+src\control\CustomerController.java를 스프링컨테이너용 객체로 바꾸기
+   (1) mvc1-servlet.xml파일에서
+       <context:component-scan base-package="control"/>
+       <context:component-scan base-package="com.my.service"/>
+       <context:component-scan base-package="com.my.dao"/>
+
+   (2) CustomerController.java에 @Controller 어노테이션 추가
+       @Autowired
+       private CustomerService service;
+
+       @PostMapping("/login")
+       public String login(String id, String pwd, HttpServletRequest request){   }
+                                                           ->세션을얻기위해선언
+   (3) CustomerService.java에 @Service 어노테이션 추가
+       @Autowired
+       private CustomerDAO dao;
+   
+   (4) CustomerDAO.java에 @Repository 어노테이션 추가
+   (5) CustomerDAO에 MyBatis라이브러리 사용하도록 설정
+1) src\mybatis-config.xml, customer-mapper.xml
+2) mvc1-servlet.xml에 DataSource객체와 SqlSessionFactory객체관리
+<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+	<property name="driverClassName" value="oracle.jdbc.driver.OracleDriver"></property>
+	<property name="url" value="jdbc:oracle:thin:@localhost:1521:xe"></property>
+	<property name="username" value="C##ORA_USER"></property>
+	<property name="password" value="bong"></property>
+</bean>
+<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+	<property name="dataSource" ref="dataSource"></property>
+	<property name="configLocation" value="classpath:mybatis-config.xml"></property>
+</bean>
+
+3) CustomerDAO에서 sqlSessionFactory자동주입
+@Autowired
+private SqlSessionFactory SqlSessionFactory;
+
+public Customer selectById(String id) throws NotFoundException{
+	SqlSession sqlSession = SqlSessionFactory.openSession();
+	Customer c = sqlSession.selectOne("com.my.vo.Customer.selectById", id);
+	if(c==null) {
+		throw new NotFoundException("아이디가 존재하지 않습니다.");
+	}
+	sqlSession.close();
+	return c;
+}

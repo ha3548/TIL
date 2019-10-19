@@ -1,0 +1,11 @@
+public class ContextLoaderListener implements ServletContextListener {
+	public void contextInitiallized(ServletContext sc) {
+		applicationContext.xml 파일을찾아 스프링컨테이너에 등록
+	}
+	public void contextDestroyed(ServletContext sc) {
+		//톰캣이 꺼지면 비즈니스로직 소멸
+	}
+}
+--------------------------------------------------------------------------------------
+1) 비즈니스로직용 객체관리: DAO, SERVICE 	-- applicationContext.xml
+2) 백엔드 컨트롤러 객체관리: Controller 	-- s1-servlet.x

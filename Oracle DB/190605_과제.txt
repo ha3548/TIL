@@ -1,0 +1,53 @@
+1. customer 테이블
+CREATE TABLE customer (
+c_code VARCHAR2(4) CONSTRAINT pk_c_code PRIMARY KEY,
+c_name VARCHAR2(30),
+c_ceo VARCHAR2(12),
+c_addr VARCHAR2(100),
+c_phone VARCHAR2(13)
+);
+
+ALTER TABLE customer
+MODIFY (c_code VARCHAR2(4) CONSTRAINT nn_code NOT NULL);
+
+2. trade 테이블
+CREATE TABLE trade (
+t_seq NUMBER CONSTRAINT pk_t_seq PRIMARY KEY,
+p_code CHAR(3),
+c_code VARCHAR2(4),
+t_date DATE,
+t_qty NUMBER,
+t_cost NUMBER,
+t_tax NUMBER
+);
+
+ALTER TABLE trade
+MODIFY (t_seq NUMBER CONSTRAINT nn_t_seq NOT NULL);
+
+3. product 테이블
+CREATE TABLE product (
+p_code CHAR(3) CONSTRAINT pk_p_code PRIMARY KEY,
+p_name VARCHAR2(30),
+p_cost NUMBER,
+p_group VARCHAR2(30)
+);
+
+ALTER TABLE product
+MODIFY (p_code CHAR(3) CONSTRAINT nn_p_code NOT NULL);
+
+4. stock 테이블
+CREATE TABLE stock (
+p_code CHAR(3),
+s_qty NUMBER CONSTRAINT pk_qty PRIMARY KEY,
+s_lastdate DATE
+);
+
+ALTER TABLE stock
+MODIFY (s_qty NUMBER CONSTRAINT nn_qty NOT NULL);
+
+ALTER TABLE stock
+ADD CONSTRAINT fk_pcode FOREIGN KEY (p_code)
+REFERENCES product(p_code);
+
+ALTER TABLE stock
+MODIFY (p_code CHAR(3) CONSTRAINT nn_pcode NOT NULL);

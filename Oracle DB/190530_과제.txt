@@ -1,0 +1,130 @@
+﻿-EQUI
+-NATURAL
+-JOIN~ON
+-JOIN~USING
+
+1.
+select * from student s, enrol e
+where s.stu_no = e.stu_no;
+
+select *
+from student NATURAL JOIN enrol;
+
+select *
+from student JOIN enrol ON student.stu_no = enrol.stu_no;
+
+select *
+from student JOIN enrol USING(stu_no);
+
+2.
+select st.stu_no, st.stu_name, sb.sub_name, e.enr_grade
+from student st, subject sb,enrol e
+where (e.stu_no=st.stu_no) and (e.sub_no=sb.sub_no);
+
+select stu_no, stu_name, sub_name, enr_grade
+from enrol e NATURAL JOIN student
+	     NATURAL JOIN subject;
+
+select st.stu_no, st.stu_name, sb.sub_name, e.enr_grade
+from enrol e JOIN student st ON e.stu_no=st.stu_no
+	     JOIN subject sb ON e.sub_no=sb.sub_no;
+
+select stu_no, stu_name, sub_name, enr_grade
+from enrol e JOIN student st USING(stu_no)
+	     JOIN subject sb USING(sub_no);
+
+3,4.
+select sb.sub_name, e.stu_no, e.enr_grade
+from subject sb, enrol e
+where sb.sub_no=e.sub_no;
+
+select sub_name, stu_no, enr_grade
+from subject NATURAL JOIN enrol;
+
+select sb.sub_name, e.stu_no, e.enr_grade
+from subject sb JOIN enrol e ON sb.sub_no=e.sub_no;
+
+select sb.sub_name, e.stu_no, e.enr_grade
+from subject sb JOIN enrol e USING(sub_no);
+
+5,6,7
+select st.stu_name, e.enr_grade
+from student st, enrol e
+where st.stu_no = e.stu_no
+and e.enr_grade>=70;
+(and e.enr_grade>=60;) -> 6번문제만
+
+select stu_name, enr_grade
+from student st NATURAL JOIN enrol e
+where enr_grade>=70;
+
+select st.stu_name, e.enr_grade
+from student st JOIN enrol e ON st.stu_no = e.stu_no
+where e.enr_grade>=70;
+
+select st.stu_name, e.enr_grade
+from student st JOIN enrol e USING(stu_no)
+where e.enr_grade>=70;
+
+8,9,10.
+select st.stu_name, sb.sub_name, sb.sub_prof
+from enrol e, student st, subject sb
+where (e.stu_no=st.stu_no and e.sub_no=sb.sub_no)
+and st.stu_name='김인중';
+
+select st.stu_name, sb.sub_name, sb.sub_prof
+from enrol e NATURAL JOIN subject sb
+	     NATURAL JOIN student st
+where st.stu_name='김인중';
+
+select st.stu_name, sb.sub_name, sb.sub_prof
+from enrol e JOIN subject sb ON e.sub_no=sb.sub_no
+                  JOIN student st ON e.stu_no=st.stu_no
+where st.stu_name='김인중';
+
+select stu_name, sub_name, sub_prof
+from enrol JOIN subject USING(sub_no)
+                JOIN student USING(stu_no)
+where stu_name='김인중';
+
+11.
+select sb.sub_prof, st.stu_name
+from enrol e, student st, subject sb
+where (e.stu_no=st.stu_no and e.sub_no=sb.sub_no)
+and sb.sub_prof='강종영';
+
+select sub_prof, stu_name
+from enrol NATURAL JOIN subject
+	  NATURAL JOIN student
+where sub_prof='강종영';
+
+select sb.sub_prof, st.stu_name
+from enrol e JOIN subject sb ON e.sub_no=sb.sub_no
+                  JOIN student st ON e.stu_no=st.stu_no
+where sb.sub_prof='강종영';
+
+select sub_prof, stu_name
+from enrol JOIN student USING(stu_no)
+	     JOIN subject USING(sub_no)
+where sub_prof='강종영';
+
+12.
+select sb.sub_name, st.stu_no, st.stu_name
+from enrol e, student st, subject sb
+where (e.stu_no=st.stu_no and e.sub_no=sb.sub_no)
+and sb.sub_name='컴퓨터개론';
+
+select sub_name, stu_no, stu_name
+from enrol NATURAL JOIN subject
+	  NATURAL JOIN student
+where sub_name='컴퓨터개론';
+
+select sb.sub_name, st.stu_no, st.stu_name
+from enrol e JOIN subject sb ON e.sub_no=sb.sub_no
+                 JOIN student st ON e.stu_no=st.stu_no
+where sb.sub_name='컴퓨터개론';
+
+select sub_name, stu_no, stu_name
+from enrol JOIN student USING(stu_no)
+	  JOIN subject USING(sub_no)
+where sub_name='컴퓨터개론';

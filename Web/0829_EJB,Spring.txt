@@ -1,0 +1,24 @@
+Enterprise Java Bean : 기업형 분산컴포넌트 개발기술
+- 견고한 스펙(특정 인터페이스를 구현해야하고, 특정 메서드를 갖고있어야함)
+- 단점: 무겁다, 확장성저하, 특정 WAS필요(웹로직, 웹스피어, 제우스 등)
+
+Spring : 기업형 로컬컴포넌트 개발기술
+- POJO(Plain Old Java Object, 오래된 방식의 간단한 자바 오브젝트) 지향
+- 장점: 가볍다, 확장성향상, 특정 WAS필요X (톰캣사용해도됨)
+
+Framework [갑]   -   개발자 [을]
+Library [을]        -   개발자 [갑]
+
+
+public class A {
+    private B b; //B와 관계를 맺고있음
+    public void setB(B b) { this.b=b; }
+    public B getB( ){ return b; }
+    public String toString( ) { 
+        return b.toString( );
+    }
+}
+
+A a = new A( );
+a.setB( new B1( ) );
+sop(a); //B1@xxxxxxx

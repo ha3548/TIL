@@ -1,0 +1,2 @@
+netstat -ao
+taskkill /f /pid (8080쓰는애)

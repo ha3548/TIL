@@ -1,0 +1,112 @@
+Java의 가장 큰 맹점은 NullPointException 처리가 어렵다
+메모리를 잘못참조했을때 if~else구문을 일일이 써서 테스트를 많이해봐야한다
+-> Spring Framework에서는 Kotlin이라는 언어를 채택해서 사용
+
+Reactive Programming이 무엇인가? <-> React랑 구분!!
+
+Spring WebFlux
+: 비동기 프로그래밍 기반인 reactive programming을 제공하는 모듈,
+  비동기 일처리로 웹의 처리속도를 빠르게 해주는 모듈
+
+
+IoC is also known as dependency injection (DI, 의존성주입)
+= DI는 IoC의 subset
+
+※ DI
+<bean class="A" id="a">
+  <property name="msg" value="안녕!" /> -----> Injection
+  <property name="i" ref="i" /> 	      -----> Dependency Injection
+</bean>
+
+※ Annotation 정리
+Spring용 어노테이션
+- 설정용 어노테이션: XML파일 대신 사용
+@Configuration, @Bean, @Import, and @DependsOn
+- 그 외
+@Autowired: 매번 bean태그로 설정하는 Injection 대신 사용, 데이터타입에 해당하는 bean객체를 찾아 자동주입
+@Qualifier: 객체의 타입이 같은경우, 이름또는ID에 해당하는 bean객체를 찾아 자동주입 (Spring API)
+ Ex)
+  <bean class="C2" id="i2"/>
+  <bean class="C2" id="i1"/>
+  <bean class="A" id="a"/>
+  public class A {
+    @Autowired
+    private Inter i;
+  }
+@Resource: 이름또는ID에 해당하는 bean객체를 찾아 자동주입 (JAVA API)
+  Ex) <context:annotation-config> 설정이 필요하다
+
+
+@Component: bean객체 자동생성
+@Repository: DAO용 bean객체 자동생성
+@Service: Service용 bean객체 자동생성
+@Controller: MVC Controller용 bean객체 자동생성
+@RestController: View없는 MVC Controller용 bean객체 자동생성 (JSON응답)
+  Ex)
+  <context:component-scan base-package=""> 설정이 필요하다 -> <context:annotation-config>가 내장되어있음
+  @Controller는 <mvc:annotation-driven> 설정도 필요하다 -> HandlerMapping, HandlerAdapter, ViewResolver처리 알아서해줌
+
+<!-- MVC Controller용 메서드어노테이션 -->
+    : 요청에 해당 Controller용 메서드 설정
+@RequestMapping @GetMapping @PostMapping
+
+@RequestParam: 메서드매개변수를 요청전달데이터와 매핑
+@ModelAttribute: 메서드매개변수를 View에서도 사용가능
+
+@RequestBody: 요청전달데이터를 JSON문자열로 처리
+@ResponseBody: 응답데이터를 JSON문자열로 처리
+
+@Transactional: 트랜잭션에 포함할 DAO용 메서드
+Ex) <tx:annotation-driven> 설정이 필요하다
+
+----------------------------------------------------------------------------
+Spring MVC
+
+1) HandlerMapping: URL에 해당 컨트롤러 찾기
+2) HandlerAdapter: 컨트롤러용메서드 호출하기 
+                     (메서드 매개변수를 요청전달데이터와 매핑, Command객체로 매핑, 요청전달데이터를 매개변수로 자동형변환)
+@ResponseBody가 설정되어있는 메서드는 문자열형태로 변환
+@ResponseBody가 설정안된 메서드는 ModelAndView객체형태로 반환
+**Controller에서 View로 이동하는 기본방법: forward
+Ex) @GetMapping("/a")
+    public String a( ) { return "/b.jsp"; }
+
+**Controller에서 View로 이동하는 기본방법: redirect
+Ex) @GetMapping("/a")
+    public String a( ) { return "redirect:b.jsp"; }
+
+3) ViewResolver: 해당 View 찾기
+web.xml 파일
+<servlet>
+  <servlet-name>mvc2</servlet-name>
+  <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+</servlet>
+<servlet-mapping>
+  <servlet-name>mvc2</servlet-name>
+  <url-pattern>/</url-pattern>
+</servlet-mapping>
+Spring MVC용 설정파일이름: mvc-servlet.xml
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

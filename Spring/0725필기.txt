@@ -1,0 +1,86 @@
+layout.jsp
+  <nav style='background-color: white;'>
+  <jsp:include page="menu.html"/>
+
+객체모델링 패턴
+<MVC패턴>
+SERVICE/DAO: 비즈니스로직 담당 - <Model>
+
+JSP: 프리젠테이션 로직담당 - <VIEW>
+
+SERVLET: 컨트롤러 로직담당 - <Control>
+요청(request.getParameter())받아 비즈니스로직호출(service.login())
+
+HttpServlet
+     |
+HttpJspBase
+     |
+first_jsp
+
+first.jsp요청
+--> first.jsp전용 객체(first_jsp.class)
+	         존재--NO ---> 전용 클래스(first_jsp.class)
+				존재--NO ---> 1. 전용 자바파일 만듦 2. 컴파일
+				객체생성
+     jspInit()자동호출
+     HttpServletRequest, HttpServletResponse객체생성
+     _jspService(,)자동호출
+
+-----------------------------------------------------------------------------------------------
+
+JavaScript는 서버X, 클라이언트 웹브라우저에서 실행
+-> 처리순서는 jsp가 먼저, 클라이언트에게 응답된 후 JavaScript실행
+
+-----------------------------------------------------------------------------------------------
+
+a.jsp
+<%int i=10;%>
+
+//include directive
+b.jsp		---------> b_jsp.java	 
+<%@include file="a.jsp"%>	 int i=10;
+<% int i=99; %> 오류발생
+<%=i%>	 		 out.print(i);
+	
+//standard action tag -include tag		  
+c.jsp		---------> c_jsp.java
+<jsp:include page="a.jsp"/>	 ~~~.include(,,"a.jsp", );
+<%=i%> 오류발생
+<% int i=99; %>		 int i=99;
+
+-----------------------------------------------------------------------------------------------
+
+WEBSERVER [톰캣]		a.html a.jsp login
+
+웹서버영역	.html .htm .js .css .txt .jpg ··· 파일찾아서 파일내용을 응답
+
+엔진영역		jsp엔진
+		servlet엔진 - web.xml파일
+				-url-pattern해당클래스찾기
+
+서비스영역
+
+-----------------------------------------------------------------------------------------------
+
+html파일 -> jsp파일 변경
+1) jsp파일의 encoding변경
+2) page지시자로 응답형식지정
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
